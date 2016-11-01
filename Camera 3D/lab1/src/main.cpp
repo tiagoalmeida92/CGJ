@@ -45,10 +45,12 @@ unsigned int FrameCount = 0;
 #define VERTICES 0
 #define COLORS 1
 
-GLuint VaoId, VboId[2];
+GLuint VaoId, VboId[3];
 GLint ProgramId;
 Shader shader;
-GLint UniformId;
+
+GLint UboId, UniformId;
+const GLuint UBO_BP = 0;
 GLint UniformColorId;
 
 /////////////////////////////////////////////////////////////////////// ERRORS
@@ -76,15 +78,19 @@ void checkOpenGLError(std::string error)
 
 void createShaderProgram()
 {
-	shader = CreateProgram("glscripts/triangle.vert", "glscripts/triangle.frag");
+	shader = CreateProgram("glscripts/triangle_new.vert", "glscripts/triangle.frag");
 	if (shader.compiled) {
 		ProgramId = shader.ProgramId;
 
 		BindAttributeLocation(ProgramId, VERTICES, "in_Position");
 		BindAttributeLocation(ProgramId, COLORS, "in_Color");
 
-		UniformId = GetUniformLocation(ProgramId, "Matrix");
 		UniformColorId = GetUniformLocation(ProgramId, "Color");
+
+		UniformId = GetUniformLocation(ProgramId, "ModelMatrix");
+		UboId = glGetUniformBlockIndex(ProgramId, "SharedMatrices");
+		glUniformBlockBinding(ProgramId, UboId, UBO_BP);
+
 	}
 	checkOpenGLError("ERROR: Could not create shaders." );
 }
@@ -99,43 +105,43 @@ void destroyShaderProgram()
 
 /////////////////////////////////////////////////////////////////////// VAOs & VBOs
 
-const Vec2 Vertices[] =
-{
-	Vec2{ 0.0f, -0.25f },	//0
-	Vec2{ 0.25f, -0.25f},
-	Vec2{ 0.0f, 0.25f},
-	Vec2{ -0.25f, -0.25f}, //2
-	Vec2{ 0.25f, -0.25f},
-	Vec2{ -0.25f, 0.25f},
-	Vec2{ 0.25f, 0.25f},  //6
-	Vec2{ -0.5f, -0.25f},
-	Vec2{ 0.5f, 0.25f},   //8
-};
-
-//const Vec3 Vertices[] =
+//const Vec2 Vertices[] =
 //{
-//	Vec3{ 0.0f, -0.25f, 0.0f },	//0
-//	Vec3{ 0.25f, -0.25f, 0.0f },
-//	Vec3{ 0.0f, 0.25f, 0.0f },
-//	Vec3{ -0.25f, -0.25f, 0.0f }, //3
-//	Vec3{ 0.25f, -0.25f, 0.0f },
-//	Vec3{ -0.25f, 0.25f, 0.0f },
-//	Vec3{ 0.25f, 0.25f, 0.0f },  //6
-//	Vec3{ -0.5f, -0.25f, 0.0f },
-//	Vec3{ 0.5f, 0.25f, 0.0f },   //8
-//
-//
-//	Vec3{ 0.0f, -0.25f, 1.0f },	//0
-//	Vec3{ 0.25f, -0.25f, 1.0f },
-//	Vec3{ 0.0f, 0.25f, 1.0f },
-//	Vec3{ -0.25f, -0.25f, 1.0f }, //3
-//	Vec3{ 0.25f, -0.25f, 1.0f },
-//	Vec3{ -0.25f, 0.25f, 1.0f },
-//	Vec3{ 0.25f, 0.25f, 1.0f },  //6
-//	Vec3{ -0.5f, -0.25f, 1.0f },
-//	Vec3{ 0.5f, 0.25f, 1.0f }   //8
-//
+//	Vec2{ 0.0f, -0.25f },	//0
+//	Vec2{ 0.25f, -0.25f},
+//	Vec2{ 0.0f, 0.25f},
+//	Vec2{ -0.25f, -0.25f}, //2
+//	Vec2{ 0.25f, -0.25f},
+//	Vec2{ -0.25f, 0.25f},
+//	Vec2{ 0.25f, 0.25f},  //6
+//	Vec2{ -0.5f, -0.25f},
+//	Vec2{ 0.5f, 0.25f},   //8
 //};
+
+const Vec3 Vertices[] =
+{
+	Vec3{ 0.0f, -0.25f, 0.0f },	//0
+	Vec3{ 0.25f, -0.25f, 0.0f },
+	Vec3{ 0.0f, 0.25f, 0.0f },
+	Vec3{ -0.25f, -0.25f, 0.0f }, //3
+	Vec3{ 0.25f, -0.25f, 0.0f },
+	Vec3{ -0.25f, 0.25f, 0.0f },
+	Vec3{ 0.25f, 0.25f, 0.0f },  //6
+	Vec3{ -0.5f, -0.25f, 0.0f },
+	Vec3{ 0.5f, 0.25f, 0.0f },   //8
+
+
+	Vec3{ 0.0f, -0.25f, 1.0f },	//9
+	Vec3{ 0.25f, -0.25f, 1.0f },
+	Vec3{ 0.0f, 0.25f, 1.0f },
+	Vec3{ -0.25f, -0.25f, 1.0f }, //12
+	Vec3{ 0.25f, -0.25f, 1.0f },
+	Vec3{ -0.25f, 0.25f, 1.0f },
+	Vec3{ 0.25f, 0.25f, 1.0f },  //15
+	Vec3{ -0.5f, -0.25f, 1.0f },
+	Vec3{ 0.5f, 0.25f, 1.0f }   //17
+
+};
 
 const GLubyte Indices[] =
 {
@@ -146,6 +152,7 @@ const GLubyte Indices[] =
 			//Paralelogram
 	7,1,8,  //Triangle 1
 	7,8,5	//Triangle 2
+	,9,10,11,12,13,14,15,16,17
 
 };
 
@@ -167,24 +174,31 @@ void createBufferObjects()
 	glGenVertexArrays(1, &VaoId);
 	glBindVertexArray(VaoId);
 	{
-		glGenBuffers(2, VboId);
+		glGenBuffers(3, VboId);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VboId[0]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 		glEnableVertexAttribArray(VERTICES);
-		glVertexAttribPointer(VERTICES, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2), 0);
+		glVertexAttribPointer(VERTICES, 2, GL_FLOAT, GL_FALSE, sizeof(Vec3), 0);
 		
 		//glBindBuffer(GL_ARRAY_BUFFER, VboId[1]);
 		//glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
 		//glEnableVertexAttribArray(COLORS);
 		//glVertexAttribPointer(COLORS, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
+
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VboId[1]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(Mat4) * 2, 0, GL_STREAM_DRAW);
+		glBindBufferBase(GL_UNIFORM_BUFFER, UBO_BP, VboId[2]);
 	}
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	checkOpenGLError("ERROR: Could not create VAOs and VBOs.");
 }
@@ -194,10 +208,11 @@ void destroyBufferObjects()
 	glBindVertexArray(VaoId);
 	glDisableVertexAttribArray(VERTICES);
 	glDisableVertexAttribArray(COLORS);
-	glDeleteBuffers(2, VboId);
+	glDeleteBuffers(3, VboId);
 	glDeleteVertexArrays(1, &VaoId);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glBindVertexArray(0);
 
 	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
@@ -257,7 +272,7 @@ Mat4 ViewMatrix2 = {
 	0.00f,  0.00f, -8.70f,  1.00f
 }; 
 
-   // Orthographic LeftRight(-2,2) TopBottom(-2,2) NearFar(1,10)
+// Orthographic LeftRight(-2,2) TopBottom(-2,2) NearFar(1,10)
 Mat4 ProjectionMatrix1 = {
 	0.50f,  0.00f,  0.00f,  0.00f,
 	0.00f,  0.50f,  0.00f,  0.00f,
@@ -324,22 +339,24 @@ void drawScene()
 	if (shader.compiled == false) {
 		return;
 	}
-	glBindVertexArray(VaoId);
-	glUseProgram(ProgramId);
 
 	color = 0;
 	
 
-	glBindBuffer(GL_UNIFORM_BUFFER, VboId[1]);
-	//glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), ViewMatrix1.data);
-	//glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Mat4), sizeof(Mat4), ProjectionMatrix2.data);
+	glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), ViewMatrix1.data);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Mat4), sizeof(Mat4), ProjectionMatrix2.data);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, ModelMatrix.data);
+	glBindVertexArray(VaoId);
+	glUseProgram(ProgramId);
+
+	glUniformMatrix4fv(UniformId, 1, GL_FALSE, ModelMatrix.data);
 	
 	drawSquares();
 	drawParalelogram();
 	drawTriangles();
-
+	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_BYTE, (void*)15);
 
 	glUseProgram(0);
 	glBindVertexArray(0);

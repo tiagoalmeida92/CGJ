@@ -140,7 +140,7 @@
   <ItemGroup>
     <None Include="glscripts\triangle.frag" />
     <None Include="glscripts\triangle.vert" />
-    <None Include="glscripts\triangle_old.vert" />
+    <None Include="glscripts\triangle_new.vert" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\Engine\Engine.vcxproj">
