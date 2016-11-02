@@ -21,3 +21,4 @@
 	Mat4 convertTo4(Mat3&);
 	Mat3 convertTo3(Mat4&);
 	
+	Mat4 lookAt(Vec3&, Vec3&, Vec3&);

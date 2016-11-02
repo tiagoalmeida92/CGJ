@@ -14,6 +14,6 @@ uniform SharedMatrices
 
 void main(void)
 {
-	gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(in_Position.x, in_Position.y, in_Position.z, 1.0);
+	gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(in_Position, 1.0);
 	ex_Color = in_Color;
 }

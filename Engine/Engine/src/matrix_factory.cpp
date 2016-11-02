@@ -77,3 +77,38 @@ Mat3 convertTo3(Mat4& mat4) {
 		mat4.data[8], mat4.data[9], mat4.data[10]
 	};
 }
+
+Mat4 lookAt(Vec3& eye, Vec3 &center, Vec3 &up) {
+	Mat4 result;
+
+	Vec3 s, u, v;
+
+	v = eye - center;
+	v = v.normalize();
+	u = up;
+	s = u.cross(v);
+
+
+	u = v.cross(s);
+
+	s = s.normalize();
+	u = u.normalize();
+
+	result.data[0] = s.x;
+	result.data[1]= s.y;
+	result.data[2]= s.z;
+	result.data[3] = -s.dot(eye);
+	result.data[4] = u.x;
+	result.data[5] = u.y;
+	result.data[6] = u.z;
+	result.data[7] = -u.dot(eye);
+	result.data[8] = v.x;
+	result.data[9] = v.y;
+	result.data[10] = v.z;
+	result.data[11] = -v.dot(eye);
+	result.data[12] = 0;
+	result.data[13] = 0;
+	result.data[14] = 0;
+	result.data[15] = 1.0f;
+	return result;
+}
