@@ -180,30 +180,30 @@ void destroyBufferObjects()
 
 #define PI 3.14159265358979f
 
-Mat4 I = MatrixFactory::identity4();
-Mat4 translateAbitLeft = MatrixFactory::translate(Vec3(-0.1f, 0.0f, 0));
-Mat4 translateLeft = MatrixFactory::translate(Vec3(-0.25f, 0.0f, 0));
-Mat4 translateTopLeft = MatrixFactory::translate(Vec3(-0.3f, 0.5f, 0));
-Mat4 big_triangle_1_translate = MatrixFactory::translate(Vec3(0.0f, -0.5f, 0));
-Mat4 big_triangle_2_translate = MatrixFactory::translate(Vec3(-0.005f, -0.83f, 0));
-Mat4 translate25Right = MatrixFactory::translate(Vec3(0.25f, 0.0f, 0));
-Mat4 translateRight = MatrixFactory::translate(Vec3(0.5f, 0.0f, 0));
-Mat4 translateBottom = MatrixFactory::translate(Vec3(0.0f, -0.5f, 0));
-Mat4 translateAlotBottom = MatrixFactory::translate(Vec3(0.0f, -0.65f, 0));
-Mat4 smallTriangle1Translate = MatrixFactory::translate(Vec3(-0.2f, 0.69f, 0));
-Mat4 smallTriangle2Translate = MatrixFactory::translate(Vec3(0.05f, 0.69f, 0));
-Mat4 translateTop = MatrixFactory::translate(Vec3(0.0f, 0.5f, 0));
+Mat4 I = identity4();
+Mat4 translateAbitLeft = translate(Vec3(-0.1f, 0.0f, 0));
+Mat4 translateLeft = translate(Vec3(-0.25f, 0.0f, 0));
+Mat4 translateTopLeft = translate(Vec3(-0.3f, 0.5f, 0));
+Mat4 big_triangle_1_translate = translate(Vec3(0.0f, -0.5f, 0));
+Mat4 big_triangle_2_translate = translate(Vec3(-0.005f, -0.83f, 0));
+Mat4 translate25Right = translate(Vec3(0.25f, 0.0f, 0));
+Mat4 translateRight = translate(Vec3(0.5f, 0.0f, 0));
+Mat4 translateBottom = translate(Vec3(0.0f, -0.5f, 0));
+Mat4 translateAlotBottom = translate(Vec3(0.0f, -0.65f, 0));
+Mat4 smallTriangle1Translate = translate(Vec3(-0.2f, 0.69f, 0));
+Mat4 smallTriangle2Translate = translate(Vec3(0.05f, 0.69f, 0));
+Mat4 translateTop = translate(Vec3(0.0f, 0.5f, 0));
 
-Mat4 translateMediumTriangle = MatrixFactory::translate(Vec3(0.5f, 0.0f, 0));
-Mat4 translate25Top = MatrixFactory::translate(Vec3(0.0f, 0.25f, 0));
-Mat4 translate25Bottom = MatrixFactory::translate(Vec3(0.0f, -0.25f, 0));
-Mat4 scaleMedium = MatrixFactory::scaling4(Vec3(1.0f, 1.0f, 0));
-Mat4 scaleNegative = MatrixFactory::scaling4(Vec3(-1.0f, -1.0f, 0));
-Mat4 scaleBig = MatrixFactory::scaling4(Vec3(1.3f, 1.3f, 0));
-Mat4 scaleSmall = MatrixFactory::scaling4(Vec3(0.75f, 0.75f, 0));
-Mat4 rotate90Left = MatrixFactory::rotate4(Vec3(0.0f, 0.0f, 1.0f), PI/2);
-Mat4 rotateRight = MatrixFactory::rotate4(Vec3(0.0f, 0.0f, 1.0f), ((3*PI) / 2));
-Mat4 rotate180 = MatrixFactory::rotate4(Vec3(0.0f, 0.0f, 1.0f), PI);
+Mat4 translateMediumTriangle = translate(Vec3(0.5f, 0.0f, 0));
+Mat4 translate25Top = translate(Vec3(0.0f, 0.25f, 0));
+Mat4 translate25Bottom = translate(Vec3(0.0f, -0.25f, 0));
+Mat4 scaleMedium = scaling4(Vec3(1.0f, 1.0f, 0));
+Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, 0));
+Mat4 scaleBig = scaling4(Vec3(1.3f, 1.3f, 0));
+Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0));
+Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI/2);
+Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), ((3*PI) / 2));
+Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI);
 
 int color = 0;
 void bindNewColor() {
