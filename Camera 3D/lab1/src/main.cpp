@@ -297,7 +297,7 @@ void drawTriangles() {
 
 
 	vector<int> colors2 = { 17, 18, 19, 20, 21 };
-	GLGameObject triangle2 = GLGameObject(colors2, 0, faceElements, UniformId, UniformColorId, (big_triangle_2_translate * rotateRight * scaleNegative * scaleBig));
+	GLGameObject triangle2 = GLGameObject(colors2, 0, faceElements, UniformId, UniformColorId, (big_triangle_2_translate * rotate90Left * scaleBig));
 	triangle2.draw();
 
 	//bindNewColor();
