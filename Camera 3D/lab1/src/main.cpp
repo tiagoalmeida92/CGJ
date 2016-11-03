@@ -273,7 +273,7 @@ Mat4 xViewMatrixRotation = identity4();
 Mat4 yViewMatrixRotation = identity4();
 Mat4 zViewMatrixRotation = identity4();
 
-Vec3 eye = { 5, 5, 5 };
+Vec3 eye = { 3, 3, 3 };
 Vec3 center = { 0, 0, 0 };
 Vec3 up = { 0, 1, 0 };
 
@@ -316,9 +316,6 @@ void drawSquares() {
 
 	GLGameObject cube = GLGameObject(vec, 24, faceElements, UniformId, UniformColorId, translate25Bottom);
 	cube.draw();
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translate25Bottom).convert_opengl());
-	//glDrawElements(GL_TRIANGLES, CUBE_VERTICES, GL_UNSIGNED_BYTE, SQUARE_INDEX);
 }
 
 void drawParalelogram() {
@@ -327,11 +324,6 @@ void drawParalelogram() {
 
 	GLGameObject paralellogram = GLGameObject(colors, 60, faceElements, UniformId, UniformColorId, parallelogramTranslate * scaleBig);
 	paralellogram.draw();
-
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (parallelogramTranslate * scaleBig).convert_opengl());
-
-	//glDrawElements(GL_TRIANGLES, PARALLEGRAM_VERTICES, GL_UNSIGNED_BYTE, PARALLELOGRAM_INDEX);
 }
 
 
@@ -341,7 +333,7 @@ void drawScene()
 		return;
 	}
 
-	color = 0;
+	viewMatrix = lookAt(eye, center, up);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), (viewMatrix * xViewMatrixRotation * yViewMatrixRotation * zViewMatrixRotation).convert_opengl());
@@ -432,7 +424,7 @@ void onMouse(int button, int state, int x, int y)
 	
 }
 
-
+#define EYE_OFFSET 0.1f
 
 void onMotion(int x, int y) {
 	if (mouseX < x) {
@@ -463,6 +455,21 @@ void onKey(unsigned char key, int x, int y) {
 		else {
 			currentPerspective = &orthoMatrix;
 		}
+	}
+	if (key == 'w') {
+		eye.x -= EYE_OFFSET;
+		eye.y -= EYE_OFFSET;
+		eye.z -= EYE_OFFSET;
+	}
+	else if (key == 's') {
+		eye.x += EYE_OFFSET;
+		eye.y += EYE_OFFSET;
+		eye.z += EYE_OFFSET;
+	}
+	else if (key == 'a') {
+		eye.x = 3;
+		eye.y = 3;
+		eye.z = 3;
 	}
 }
 
