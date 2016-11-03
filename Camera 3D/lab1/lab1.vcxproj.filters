@@ -21,10 +21,18 @@
     <ClCompile Include="src\original_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GLGameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="glscripts\triangle.vert" />
     <None Include="glscripts\triangle.frag" />
     <None Include="glscripts\triangle_new.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\GLGameObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

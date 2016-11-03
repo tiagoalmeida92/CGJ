@@ -35,6 +35,7 @@
 #include "gl_shader.hpp"
 #include "vec.hpp"
 #include "matrix_factory.hpp"
+#include "GLGameObject.hpp"
 
 #define CAPTION "Hello Modern 2D World"
 
@@ -173,64 +174,38 @@ const GLubyte Indices[] =
 	11, 10, 9, //back face
 	9, 10, 1,
 	9, 1, 0,
-
 	11, 9, 0,
 	11, 0, 2,
 	10, 11, 2,
 	10, 2, 1,
-
-	//	   //Square
+//Square
 	5, 3, 4,  //front
 	5, 4, 6,  //
 	12, 14, 15, //back
 	12, 15, 13, 
 	14, 12, 3, // side left
 	14, 3, 5,
-
 	6, 4, 13, // side right
 	6, 13, 15,
 	14, 5, 6, //top
 	14, 6, 15,
 	3, 12, 13, //bottom
 	3, 13, 4,
-
-
-
-			//Paralelogram
+//Paralelogram
 	7,1,8,  //Triangle 1
 	7,8,5,	//Triangle 2
 	16, 14, 17,
 	16,17,10,
-
 	14, 5, 8,
 	14, 8, 17,
 	16,7,5,
 	16,5,14,
-
 	17,8,1,
 	17,1,10,
 	7,16,10,
 	7,10,1
 
-
-
 };
-
-
-const GLfloat Colors[] {
-	0.0f, 0.5f, 0.5f, 1.0f,
-	0.75f, 0.0f, 0.5f, 1.0f,
-	0.5f, 0.5f, 1.0f, 1.0f,
-	0.75f, 0.5f, 0.0f, 1.0f,
-	1.0f, 1.0f, 0.0f, 1.0f,
-	0.0f, 1.0f, 1.0f, 1.0f,
-	0.5f, 0.0f, 0.5f, 1.0f,
-	0.75f, 0.0f, 0.5f, 1.0f,
-	1.0f, 1.0f, 0.0f, 1.0f,
-	0.0f, 1.0f, 1.0f, 1.0f,
-	0.5f, 0.0f, 0.5f, 1.0f,
-};
-
 
 
 void createBufferObjects()
@@ -280,7 +255,7 @@ void destroyBufferObjects()
 
 int color = 0;
 void bindNewColor() {
-	glUniform4fv(UniformColorId, 1, &Colors[color*4]);
+	//glUniform4fv(UniformColorId, 1, &Colors[color*4]);
 	color++;
 }
 
@@ -291,6 +266,23 @@ void bindNewColor() {
 #define TRIANGLE_VERTICES 24
 #define CUBE_VERTICES 36
 #define PARALLEGRAM_VERTICES 36
+
+#define INDEX(idx) (void*)idx
+
+Mat4 xViewMatrixRotation = identity4();
+Mat4 yViewMatrixRotation = identity4();
+Mat4 zViewMatrixRotation = identity4();
+
+Vec3 eye = { 5, 5, 5 };
+Vec3 center = { 0, 0, 0 };
+Vec3 up = { 0, 1, 0 };
+
+Mat4 viewMatrix = lookAt(eye, center, up);
+
+Mat4 orthoMatrix = ortho(-2, 2, -2, 2, 1, 10);
+Mat4 perspectiveMatrix = perspective(30, (float)640 / 480, 1, 10);
+Mat4* currentPerspective = &perspectiveMatrix;
+
 
 void drawTriangles() {
 
@@ -317,11 +309,14 @@ void drawTriangles() {
 
 
 void drawSquares() {
+	vector<int> vec = { 0,1,2,3,4,5 };
+	vector <int> faceElements = { 6,6,6,6,6,6 };
 
-
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translate25Bottom).convert_opengl());
-	glDrawElements(GL_TRIANGLES, CUBE_VERTICES, GL_UNSIGNED_BYTE, SQUARE_INDEX);
+	GLGameObject cube = GLGameObject(vec, 24, faceElements, UniformId, UniformColorId, translate25Bottom);
+	cube.draw();
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translate25Bottom).convert_opengl());
+	//glDrawElements(GL_TRIANGLES, CUBE_VERTICES, GL_UNSIGNED_BYTE, SQUARE_INDEX);
 }
 
 void drawParalelogram() {
@@ -331,21 +326,6 @@ void drawParalelogram() {
 	glDrawElements(GL_TRIANGLES, PARALLEGRAM_VERTICES, GL_UNSIGNED_BYTE, PARALLELOGRAM_INDEX);
 }
 
-#define INDEX(idx) (void*)idx
-
-Mat4 xViewMatrixRotation = identity4();
-Mat4 yViewMatrixRotation = identity4();
-Mat4 zViewMatrixRotation = identity4();
-
-Vec3 eye = { 5, 5, 5 };
-Vec3 center = { 0, 0, 0 };
-Vec3 up = { 0, 1, 0 };
-
-Mat4 viewMatrix = lookAt(eye, center, up);
-
-Mat4 orthoMatrix = ortho(-2, 2, -2, 2, 1, 10);
-Mat4 perspectiveMatrix = perspective(30, (float)640 / 480, 1, 10);
-Mat4* currentPerspective = &perspectiveMatrix;
 
 void drawScene()
 {
@@ -363,13 +343,13 @@ void drawScene()
 	glBindVertexArray(VaoId);
 	glUseProgram(ProgramId);
 
-
+	vector<int> vec = { 0,1,2,3,4 };
+	vector <int> faceElements = { 3,3,6,6,6 };
+	GLGameObject triangle3d = GLGameObject(vec, 0, faceElements, UniformId, UniformColorId, (big_triangle_1_translate * rotateRight * scaleBig));
+	triangle3d.draw();
 	drawSquares();
-	drawParalelogram();
-	drawTriangles();
-
-
-
+	//drawParalelogram();
+	//drawTriangles();
 
 	glUseProgram(0);
 	glBindVertexArray(0);
