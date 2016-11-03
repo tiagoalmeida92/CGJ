@@ -278,22 +278,6 @@ void destroyBufferObjects()
 
 /////////////////////////////////////////////////////////////////////// SCENE
 
-// Orthographic LeftRight(-2,2) TopBottom(-2,2) NearFar(1,10)
-Mat4 ProjectionMatrix1 = {
-	0.50f,  0.00f,  0.00f,  0.00f,
-	0.00f,  0.50f,  0.00f,  0.00f,
-	0.00f,  0.00f, -0.22f,  0.00f,
-	0.00f,  0.00f, -1.22f,  1.00f
-}; // Column Major
-
-// Perspective Fovy(30) Aspect(640/480) NearZ(1) FarZ(10)
-Mat4 ProjectionMatrix2 = {
-	2.79f,  0.00f,  0.00f,  0.00f,
-	0.00f,  3.73f,  0.00f,  0.00f,
-	0.00f,  0.00f, -1.22f, -1.00f,
-	0.00f,  0.00f, -2.22f,  0.00f
-};
-
 int color = 0;
 void bindNewColor() {
 	glUniform4fv(UniformColorId, 1, &Colors[color*4]);
@@ -357,6 +341,12 @@ Vec3 eye = { 5, 5, 5 };
 Vec3 center = { 0, 0, 0 };
 Vec3 up = { 0, 1, 0 };
 
+Mat4 viewMatrix = lookAt(eye, center, up);
+
+Mat4 orthoMatrix = ortho(-2, 2, -2, 2, 1, 10);
+Mat4 perspectiveMatrix = perspective(30, (float)640 / 480, 1, 10);
+Mat4* currentPerspective = &perspectiveMatrix;
+
 void drawScene()
 {
 	if (shader.compiled == false) {
@@ -364,13 +354,10 @@ void drawScene()
 	}
 
 	color = 0;
-	
-	Mat4 viewMatrix = lookAt(eye, center, up);
-	Mat4 perspectiveMatrix = perspective(30, 640 / 480, 1, 10);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), (viewMatrix * xViewMatrixRotation * yViewMatrixRotation * zViewMatrixRotation).convert_opengl());
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Mat4), sizeof(Mat4), ProjectionMatrix2.data);
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Mat4), sizeof(Mat4), currentPerspective->convert_opengl());
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	glBindVertexArray(VaoId);
@@ -439,8 +426,8 @@ float xDegrees = 0;
 float yDegrees = 0;
 float zDegrees = 0;
 
-#define OFFSET_CAMERA 0.001f
-#define TO_RAD(f) (f * (180 / PI))
+#define OFFSET_CAMERA 5.0f
+#define TO_RAD(f) (f * (PI / 180))
 
 //button 0 LEFT
 //button 1 MIDDLE
@@ -451,10 +438,10 @@ void onMouse(int button, int state, int x, int y)
 		return;
 	}
 	if (button == 3) {
-		zDegrees += OFFSET_CAMERA;
+		zDegrees -= OFFSET_CAMERA;
 	}
 	else if (button == 4) {
-		zDegrees -= OFFSET_CAMERA;
+		zDegrees += OFFSET_CAMERA;
 	}
 	zViewMatrixRotation = rotate4(Vec3(0, 0, 1), TO_RAD(zDegrees));
 	
@@ -483,6 +470,17 @@ void onMotion(int x, int y) {
 	
 }
 
+void onKey(unsigned char key, int x, int y) {
+	if (key == 'p') {
+		if (currentPerspective == &orthoMatrix) {
+			currentPerspective = &perspectiveMatrix;
+		}
+		else {
+			currentPerspective = &orthoMatrix;
+		}
+	}
+}
+
 /////////////////////////////////////////////////////////////////////// SETUP
 
 void setupCallbacks()
@@ -492,6 +490,7 @@ void setupCallbacks()
 	glutIdleFunc(idle);
 	glutReshapeFunc(reshape);
 	glutTimerFunc(0, timer, 0);
+	glutKeyboardFunc(onKey);
 	glutMouseFunc(onMouse);
 	glutMotionFunc(onMotion);
 }

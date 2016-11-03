@@ -113,8 +113,38 @@ Mat4 lookAt(Vec3& eye, Vec3 &center, Vec3 &up) {
 	return result;
 }
 
+Mat4 ortho(float l, float r, float b, float t, float n, float f) {
+
+	Mat4 result;
+	result.data[0] = 2 / (r-l);
+	result.data[1] = 0;
+	result.data[2] = 0;
+	result.data[3] = (l+r)/(l-r);
+
+	result.data[4] = 0;
+	result.data[5] = 2/(t-b);
+	result.data[6] = 0;
+	result.data[7] = (b+t)/(b-t);
+
+	result.data[8] = 0;
+	result.data[9] = 0;
+	result.data[10] = 2/(n-f);
+	result.data[11] = (n+f)/(n-f);
+
+	result.data[12] = 0;
+	result.data[13] = 0;
+	result.data[14] = 0;
+	result.data[15] = 1;
+
+	return result;
+}
+
+#define PI 3.14159265358979f
+#define TO_RAD(f) (f * (PI / 180.0f))
+
 Mat4 perspective(float fovy, float aspect, float zNear, float zFar) {
-	float theta = fovy / 2;
+	float fovyRad = TO_RAD(fovy);
+	float theta = fovyRad / 2;
 	float d = 1 / (tan(theta));
 	Mat4 result;
 	result.data[0] = d / aspect;
@@ -129,8 +159,8 @@ Mat4 perspective(float fovy, float aspect, float zNear, float zFar) {
 
 	result.data[8] = 0;
 	result.data[9] = 0;
-	result.data[10] = (fovy + zNear) / (zNear - zFar);
-	result.data[11] = (2*fovy*zNear) / (zNear - zFar);
+	result.data[10] = (zFar + zNear) / (zNear - zFar);
+	result.data[11] = (2* zFar*zNear) / (zNear - zFar);
 
 	result.data[12] = 0;
 	result.data[13] = 0;

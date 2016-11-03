@@ -23,4 +23,5 @@
 	
 	Mat4 lookAt(Vec3&, Vec3&, Vec3&);
 
+	Mat4 ortho(float l, float r, float b, float t, float n, float f);
 	Mat4 perspective(float fovy, float aspect, float zNear, float zFar);
