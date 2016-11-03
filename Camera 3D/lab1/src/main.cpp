@@ -253,15 +253,9 @@ void destroyBufferObjects()
 
 /////////////////////////////////////////////////////////////////////// SCENE
 
-int color = 0;
-void bindNewColor() {
-	//glUniform4fv(UniformColorId, 1, &Colors[color*4]);
-	color++;
-}
-
-#define TRIANGLE_INDEX (void*)0
-#define SQUARE_INDEX (void*)24
-#define PARALLELOGRAM_INDEX (void*)60
+#define TRIANGLE_INDEX 0
+#define SQUARE_INDEX 24
+#define PARALLELOGRAM_INDEX 60
 
 #define TRIANGLE_VERTICES 24
 #define CUBE_VERTICES 36
@@ -314,7 +308,7 @@ void drawSquares() {
 	vector<int> vec = { 0,1,2,3,4,5 };
 	vector <int> faceElements = { 6,6,6,6,6,6 };
 
-	GLGameObject cube = GLGameObject(vec, 24, faceElements, UniformId, UniformColorId, translate25Bottom);
+	GLGameObject cube = GLGameObject(vec, SQUARE_INDEX, faceElements, UniformId, UniformColorId, translate25Bottom);
 	cube.draw();
 }
 
@@ -322,7 +316,7 @@ void drawParalelogram() {
 	vector<int> colors = { 6,7,8,9,10,11 };
 	vector <int> faceElements = { 6,6,6,6,6,6 };
 
-	GLGameObject paralellogram = GLGameObject(colors, 60, faceElements, UniformId, UniformColorId, parallelogramTranslate * scaleBig);
+	GLGameObject paralellogram = GLGameObject(colors, PARALLELOGRAM_INDEX, faceElements, UniformId, UniformColorId, parallelogramTranslate * scaleBig);
 	paralellogram.draw();
 }
 
