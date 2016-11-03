@@ -22,3 +22,5 @@
 	Mat3 convertTo3(Mat4&);
 	
 	Mat4 lookAt(Vec3&, Vec3&, Vec3&);
+
+	Mat4 perspective(float fovy, float aspect, float zNear, float zFar);

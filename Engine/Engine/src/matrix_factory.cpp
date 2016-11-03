@@ -9,7 +9,7 @@ Mat3 identity3() {
 }
 
 Mat4 identity4() {
-	return Mat4 {
+	return Mat4{
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
@@ -30,7 +30,7 @@ Mat4 scaling4(Vec3& factors) {
 }
 
 Mat4 translate(Vec3& vec) {
-	return Mat4 {
+	return Mat4{
 		1, 0, 0, vec.x,
 		0, 1, 0, vec.y,
 		0, 0, 1, vec.z,
@@ -43,7 +43,7 @@ Mat3 dual(Vec3& axis) {
 			0, -axis.z, axis.y,
 			axis.z, 0, -axis.x,
 			-axis.y, axis.x, 0
-		};
+	};
 }
 
 //Rodrigues formula
@@ -95,8 +95,8 @@ Mat4 lookAt(Vec3& eye, Vec3 &center, Vec3 &up) {
 	u = u.normalize();
 
 	result.data[0] = s.x;
-	result.data[1]= s.y;
-	result.data[2]= s.z;
+	result.data[1] = s.y;
+	result.data[2] = s.z;
 	result.data[3] = -s.dot(eye);
 	result.data[4] = u.x;
 	result.data[5] = u.y;
@@ -110,5 +110,32 @@ Mat4 lookAt(Vec3& eye, Vec3 &center, Vec3 &up) {
 	result.data[13] = 0;
 	result.data[14] = 0;
 	result.data[15] = 1.0f;
+	return result;
+}
+
+Mat4 perspective(float fovy, float aspect, float zNear, float zFar) {
+	float theta = fovy / 2;
+	float d = 1 / (tan(theta));
+	Mat4 result;
+	result.data[0] = d / aspect;
+	result.data[1] = 0;
+	result.data[2] = 0;
+	result.data[3] = 0;
+
+	result.data[4] = 0;
+	result.data[5] = d;
+	result.data[6] = 0;
+	result.data[7] = 0;
+
+	result.data[8] = 0;
+	result.data[9] = 0;
+	result.data[10] = (fovy + zNear) / (zNear - zFar);
+	result.data[11] = (2*fovy*zNear) / (zNear - zFar);
+
+	result.data[12] = 0;
+	result.data[13] = 0;
+	result.data[14] = -1;
+	result.data[15] = 0;
+
 	return result;
 }

@@ -140,27 +140,27 @@ const float depth = 0.25f;
 
 const Vec3 Vertices[] =
 {
-	Vec3{ 0.0f, -0.25f, depth },	//0        
-	Vec3{ 0.25f, -0.25f, depth },
-	Vec3{ 0.0f, 0.25f, depth },
-	Vec3{ -0.25f, -0.25f, depth }, //3
-	Vec3{ 0.25f, -0.25f, depth }, //4
-	Vec3{ -0.25f, 0.25f, depth }, //5
-	Vec3{ 0.25f, 0.25f, depth },  //6
-	Vec3{ -0.5f, -0.25f, depth },
-	Vec3{ 0.5f, 0.25f, depth },   //8
+	{ 0.0f, -0.25f, depth },	//0        
+	{ 0.25f, -0.25f, depth },
+	{ 0.0f, 0.25f, depth },
+	{ -0.25f, -0.25f, depth }, //3
+	{ 0.25f, -0.25f, depth }, //4
+	{ -0.25f, 0.25f, depth }, //5
+	{ 0.25f, 0.25f, depth },  //6
+	{ -0.5f, -0.25f, depth },
+	{ 0.5f, 0.25f, depth },   //8
 
 
 
-	Vec3{ 0.0f, -0.25f, -depth },	//9
-	Vec3{ 0.25f, -0.25f, -depth },
-	Vec3{ 0.0f, 0.25f, -depth },
-	Vec3{ -0.25f, -0.25f, -depth }, //12
-	Vec3{ 0.25f, -0.25f, -depth },
-	Vec3{ -0.25f, 0.25f, -depth },
-	Vec3{ 0.25f, 0.25f, -depth },  //15
-	Vec3{ -0.5f, -0.25f, -depth },
-	Vec3{ 0.5f, 0.25f, -depth },  
+	{ 0.0f, -0.25f, -depth },	//9
+	{ 0.25f, -0.25f, -depth },
+	{ 0.0f, 0.25f, -depth },
+	{ -0.25f, -0.25f, -depth }, //12
+	{ 0.25f, -0.25f, -depth },
+	{ -0.25f, 0.25f, -depth },
+	{ 0.25f, 0.25f, -depth },  //15
+	{ -0.5f, -0.25f, -depth },
+	{ 0.5f, 0.25f, -depth },  
 
 
 
@@ -366,6 +366,7 @@ void drawScene()
 	color = 0;
 	
 	Mat4 viewMatrix = lookAt(eye, center, up);
+	Mat4 perspectiveMatrix = perspective(30, 640 / 480, 1, 10);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), (viewMatrix * xViewMatrixRotation * yViewMatrixRotation * zViewMatrixRotation).convert_opengl());
@@ -564,7 +565,6 @@ int main(int argc, char* argv[])
 {
 	init(argc, argv);
 	glutMainLoop();
-	system("pause");
 	exit(EXIT_SUCCESS);
 }
 
