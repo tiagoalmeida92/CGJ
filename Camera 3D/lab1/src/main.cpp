@@ -67,17 +67,19 @@ Mat4 translate25Right = translate(Vec3(0.25f, 0.0f, 0));
 Mat4 translateRight = translate(Vec3(0.5f, 0.0f, 0));
 Mat4 translateBottom = translate(Vec3(0.0f, -0.5f, 0));
 Mat4 translateAlotBottom = translate(Vec3(0.0f, -0.65f, 0));
-Mat4 smallTriangle1Translate = translate(Vec3(-0.2f, 0.69f, 0));
-Mat4 smallTriangle2Translate = translate(Vec3(0.05f, 0.69f, 0));
+Mat4 smallTriangle1Translate = translate(Vec3(-0.2f, 0.83f, 0));
+Mat4 smallTriangle2Translate = translate(Vec3(0.05f, 0.83f, 0));
 Mat4 translateTop = translate(Vec3(0.0f, 0.5f, 0));
 
 Mat4 translateMediumTriangle = translate(Vec3(0.5f, 0.0f, 0));
-Mat4 translate25Top = translate(Vec3(0.0f, 0.25f, 0));
+Mat4 parallelogramTranslate = translate(Vec3(0.0f, 0.32f, 0));
 Mat4 translate25Bottom = translate(Vec3(0.0f, -0.25f, 0));
-Mat4 scaleMedium = scaling4(Vec3(1.0f, 1.0f, 0));
-Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, 0));
-Mat4 scaleBig = scaling4(Vec3(1.3f, 1.3f, 0));
-Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0));
+
+Mat4 scaleMedium = scaling4(Vec3(1.0f, 1.0f, 0.3f));
+Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, -1.0f));
+Mat4 scaleBig = scaling4(Vec3(1.3f, 1.3f, 1.5f));
+Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0.3f));
+
 Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI / 2);
 Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), ((3 * PI) / 2));
 Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI);
@@ -134,29 +136,31 @@ void destroyShaderProgram()
 
 ////////////// VAOs & VBOs
 
+const float depth = 0.25f;
+
 const Vec3 Vertices[] =
 {
-	Vec3{ 0.0f, -0.25f, 0.0f },	//0
-	Vec3{ 0.25f, -0.25f, 0.0f },
-	Vec3{ 0.0f, 0.25f, 0.0f },
-	Vec3{ -0.25f, -0.25f, 0.0f }, //3
-	Vec3{ 0.25f, -0.25f, 0.0f },
-	Vec3{ -0.25f, 0.25f, 0.0f },
-	Vec3{ 0.25f, 0.25f, 0.0f },  //6
-	Vec3{ -0.5f, -0.25f, 0.0f },
-	Vec3{ 0.5f, 0.25f, 0.0f },   //8
+	Vec3{ 0.0f, -0.25f, depth },	//0        
+	Vec3{ 0.25f, -0.25f, depth },
+	Vec3{ 0.0f, 0.25f, depth },
+	Vec3{ -0.25f, -0.25f, depth }, //3
+	Vec3{ 0.25f, -0.25f, depth }, //4
+	Vec3{ -0.25f, 0.25f, depth }, //5
+	Vec3{ 0.25f, 0.25f, depth },  //6
+	Vec3{ -0.5f, -0.25f, depth },
+	Vec3{ 0.5f, 0.25f, depth },   //8
 
 
-	Vec3{ 0.0f, -0.25f, -2.0f },	//9
-	Vec3{ 0.25f, -0.25f, -2.0f },
-	Vec3{ 0.0f, 0.25f, -2.0f },
-	Vec3{ -0.25f, -0.25f, -5.0f }, //12
-	Vec3{ 0.25f, -0.25f, -5.0f },
-	Vec3{ -0.25f, 0.25f, -1.0f },
-	Vec3{ 0.25f, 0.25f, -1.0f },  //15
-	Vec3{ -0.5f, -0.25f, -1.0f },
-	Vec3{ 0.5f, 0.25f, -1.0f },  //17
 
+	Vec3{ 0.0f, -0.25f, -depth },	//9
+	Vec3{ 0.25f, -0.25f, -depth },
+	Vec3{ 0.0f, 0.25f, -depth },
+	Vec3{ -0.25f, -0.25f, -depth }, //12
+	Vec3{ 0.25f, -0.25f, -depth },
+	Vec3{ -0.25f, 0.25f, -depth },
+	Vec3{ 0.25f, 0.25f, -depth },  //15
+	Vec3{ -0.5f, -0.25f, -depth },
+	Vec3{ 0.5f, 0.25f, -depth },  
 
 
 
@@ -166,31 +170,58 @@ const Vec3 Vertices[] =
 const GLubyte Indices[] =
 {
 	0,1,2, //Right triangle
-	9, 10, 11, //back face
-	2, 1, 10, //right face
-	2, 10, 11, 
-	11, 12, 0, //left face
-	12, 0, 1,
-	12, 0, 1,
-	12, 1, 10,  //bottom face
+	11, 10, 9, //back face
+	9, 10, 1,
+	9, 1, 0,
 
+	11, 9, 0,
+	11, 0, 2,
+	10, 11, 2,
+	10, 2, 1,
 
 	//	   //Square
-	3,4,5,  //Triangle 1
-	4,6,5,  //Triangle 2
+	5, 3, 4,  //front
+	5, 4, 6,  //
+	12, 14, 15, //back
+	12, 15, 13, 
+	14, 12, 3, // side left
+	14, 3, 5,
+
+	6, 4, 13, // side right
+	6, 13, 15,
+	14, 5, 6, //top
+	14, 6, 15,
+	3, 12, 13, //bottom
+	3, 13, 4,
+
+
+
 			//Paralelogram
 	7,1,8,  //Triangle 1
 	7,8,5,	//Triangle 2
+	16, 14, 17,
+	16,17,10,
+
+	14, 5, 8,
+	14, 8, 17,
+	16,7,5,
+	16,5,14,
+
+	17,8,1,
+	17,1,10,
+	7,16,10,
+	7,10,1
+
 
 
 };
 
 
 const GLfloat Colors[] {
-	0.5f, 0.5f, 1.0f, 1.0f,
 	0.0f, 0.5f, 0.5f, 1.0f,
-	0.75f, 0.5f, 0.0f, 1.0f,
 	0.75f, 0.0f, 0.5f, 1.0f,
+	0.5f, 0.5f, 1.0f, 1.0f,
+	0.75f, 0.5f, 0.0f, 1.0f,
 	1.0f, 1.0f, 0.0f, 1.0f,
 	0.0f, 1.0f, 1.0f, 1.0f,
 	0.5f, 0.0f, 0.5f, 1.0f,
@@ -247,30 +278,6 @@ void destroyBufferObjects()
 
 /////////////////////////////////////////////////////////////////////// SCENE
 
-
-Mat4 ModelMatrix = {
-	1.0f,  0.0f,  0.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,  0.0f,
-	0.0f,  0.0f,  1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  1.0f
-}; 
-
-   // Eye(5,5,5) Center(0,0,0) Up(0,1,0)
-Mat4 ViewMatrix1 = {
-	0.70f, -0.41f,  0.58f,  0.00f,
-	0.00f,  0.82f,  0.58f,  0.00f,
-	-0.70f, -0.41f,  0.58f,  0.00f,
-	0.00f,  0.00f, -8.70f,  1.00f
-}; 
-
-   // Eye(-5,-5,-5) Center(0,0,0) Up(0,1,0)
-Mat4 ViewMatrix2 = {
-	-0.70f, -0.41f, -0.58f,  0.00f,
-	0.00f,  0.82f, -0.58f,  0.00f,
-	0.70f, -0.41f, -0.58f,  0.00f,
-	0.00f,  0.00f, -8.70f,  1.00f
-}; 
-
 // Orthographic LeftRight(-2,2) TopBottom(-2,2) NearFar(1,10)
 Mat4 ProjectionMatrix1 = {
 	0.50f,  0.00f,  0.00f,  0.00f,
@@ -294,43 +301,50 @@ void bindNewColor() {
 }
 
 #define TRIANGLE_INDEX (void*)0
-#define SQUARE_INDEX (void*)25
-#define PARALLELOGRAM_INDEX (void*)31
+#define SQUARE_INDEX (void*)24
+#define PARALLELOGRAM_INDEX (void*)60
+
+#define TRIANGLE_VERTICES 24
+#define CUBE_VERTICES 36
+#define PARALLEGRAM_VERTICES 36
 
 void drawTriangles() {
 
 	bindNewColor();
 	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_1_translate * rotateRight * scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
-	
+	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+
 	bindNewColor();
 	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_2_translate * rotateRight * scaleNegative * scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
 	bindNewColor();
 	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translateMediumTriangle * rotateRight * scaleMedium).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
 	bindNewColor();
 	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle1Translate * scaleSmall).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
 	bindNewColor();
 	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle2Translate * scaleSmall).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 }
 
+
 void drawSquares() {
+
+
 	bindNewColor();
 	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translate25Bottom).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, SQUARE_INDEX);
+	glDrawElements(GL_TRIANGLES, CUBE_VERTICES, GL_UNSIGNED_BYTE, SQUARE_INDEX);
 }
 
 void drawParalelogram() {
 	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translate25Top).convert_opengl());
+	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (parallelogramTranslate * scaleBig).convert_opengl());
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, PARALLELOGRAM_INDEX);
+	glDrawElements(GL_TRIANGLES, PARALLEGRAM_VERTICES, GL_UNSIGNED_BYTE, PARALLELOGRAM_INDEX);
 }
 
 #define INDEX(idx) (void*)idx
@@ -361,36 +375,11 @@ void drawScene()
 	glBindVertexArray(VaoId);
 	glUseProgram(ProgramId);
 
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, ModelMatrix.data);
-	
+
 	drawSquares();
 	drawParalelogram();
 	drawTriangles();
-	//glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_BYTE, (void*)15);
 
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, INDEX(0));
-
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, INDEX(3));
-
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, INDEX(6));
-
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, INDEX(9));
-
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, INDEX(12));
-
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, INDEX(15));
 
 
 
@@ -457,7 +446,6 @@ float zDegrees = 0;
 //button 2 RIGHT
 void onMouse(int button, int state, int x, int y)
 {
-	std::cout << button << " " << y << '\n';
 	if (state == 0) {
 		return;
 	}
@@ -474,7 +462,6 @@ void onMouse(int button, int state, int x, int y)
 
 
 void onMotion(int x, int y) {
-	std::cout << x << " " << y << '\n';
 	if (mouseX < x) {
 		xDegrees += OFFSET_CAMERA;
 	}
