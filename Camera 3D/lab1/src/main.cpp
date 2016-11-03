@@ -286,25 +286,30 @@ Mat4* currentPerspective = &perspectiveMatrix;
 
 void drawTriangles() {
 
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_1_translate * rotateRight * scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	vector<int> vec = { 0,1,2,3,4 };
+	vector <int> faceElements = { 3,3,6,6,6 };
+	GLGameObject triangle3d = GLGameObject(vec, 0, faceElements, UniformId, UniformColorId, (big_triangle_1_translate * rotateRight * scaleBig));
+	triangle3d.draw();
 
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_2_translate * rotateRight * scaleNegative * scaleBig).convert_opengl());
-	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_1_translate * rotateRight * scaleBig).convert_opengl());
+	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translateMediumTriangle * rotateRight * scaleMedium).convert_opengl());
-	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_2_translate * rotateRight * scaleNegative * scaleBig).convert_opengl());
+	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle1Translate * scaleSmall).convert_opengl());
-	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translateMediumTriangle * rotateRight * scaleMedium).convert_opengl());
+	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle2Translate * scaleSmall).convert_opengl());
-	glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle1Translate * scaleSmall).convert_opengl());
+	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
+
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle2Translate * scaleSmall).convert_opengl());
+	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 }
 
 
@@ -320,10 +325,16 @@ void drawSquares() {
 }
 
 void drawParalelogram() {
-	bindNewColor();
-	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (parallelogramTranslate * scaleBig).convert_opengl());
+	vector<int> colors = { 6,7,8,9,10,11 };
+	vector <int> faceElements = { 6,6,6,6,6,6 };
 
-	glDrawElements(GL_TRIANGLES, PARALLEGRAM_VERTICES, GL_UNSIGNED_BYTE, PARALLELOGRAM_INDEX);
+	GLGameObject paralellogram = GLGameObject(colors, 60, faceElements, UniformId, UniformColorId, parallelogramTranslate * scaleBig);
+	paralellogram.draw();
+
+	//bindNewColor();
+	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (parallelogramTranslate * scaleBig).convert_opengl());
+
+	//glDrawElements(GL_TRIANGLES, PARALLEGRAM_VERTICES, GL_UNSIGNED_BYTE, PARALLELOGRAM_INDEX);
 }
 
 
@@ -343,12 +354,9 @@ void drawScene()
 	glBindVertexArray(VaoId);
 	glUseProgram(ProgramId);
 
-	vector<int> vec = { 0,1,2,3,4 };
-	vector <int> faceElements = { 3,3,6,6,6 };
-	GLGameObject triangle3d = GLGameObject(vec, 0, faceElements, UniformId, UniformColorId, (big_triangle_1_translate * rotateRight * scaleBig));
-	triangle3d.draw();
+
 	drawSquares();
-	//drawParalelogram();
+	drawParalelogram();
 	//drawTriangles();
 
 	glUseProgram(0);
