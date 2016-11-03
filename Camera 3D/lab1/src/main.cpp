@@ -140,27 +140,12 @@ const float depth = 0.25f;
 
 const Vec3 Vertices[] =
 {
-	Vec3{ 0.0f, -0.25f, depth },	//0        
-	Vec3{ 0.25f, -0.25f, depth },
-	Vec3{ 0.0f, 0.25f, depth },
-	Vec3{ -0.25f, -0.25f, depth }, //3
-	Vec3{ 0.25f, -0.25f, depth }, //4
-	Vec3{ -0.25f, 0.25f, depth }, //5
-	Vec3{ 0.25f, 0.25f, depth },  //6
-	Vec3{ -0.5f, -0.25f, depth },
-	Vec3{ 0.5f, 0.25f, depth },   //8
-
-
-
-	Vec3{ 0.0f, -0.25f, -depth },	//9
-	Vec3{ 0.25f, -0.25f, -depth },
-	Vec3{ 0.0f, 0.25f, -depth },
-	Vec3{ -0.25f, -0.25f, -depth }, //12
-	Vec3{ 0.25f, -0.25f, -depth },
-	Vec3{ -0.25f, 0.25f, -depth },
-	Vec3{ 0.25f, 0.25f, -depth },  //15
-	Vec3{ -0.5f, -0.25f, -depth },
-	Vec3{ 0.5f, 0.25f, -depth },  
+		{ 0.0f, 0.0f, 1.0f},
+		 { 1.0f, 0.0f, 1.0f},
+		 { 1.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 1.0f},
+		 { 0.0f, 1.0f, 1.0f},
+		 { 0.0f, 0.0f, 1.0f}
 
 
 
