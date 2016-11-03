@@ -79,7 +79,7 @@ Mat4 translate25Bottom = translate(Vec3(0.0f, -0.25f, 0));
 Mat4 scaleMedium = scaling4(Vec3(1.0f, 1.0f, 0.3f));
 Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, -1.0f));
 Mat4 scaleBig = scaling4(Vec3(1.3f, 1.3f, 1.5f));
-Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0.3f));
+Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0.6f));
 
 Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI / 2);
 Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), ((3 * PI) / 2));
