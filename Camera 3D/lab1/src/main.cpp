@@ -290,44 +290,23 @@ void drawTriangles() {
 	vector<int> colors = { 12, 13, 14, 15, 16 };
 	GLGameObject triangle3d = GLGameObject(colors, 0, faceElements, UniformId, UniformColorId, (big_triangle_1_translate * rotateRight * scaleBig));
 	triangle3d.draw();
-
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_1_translate * rotateRight * scaleBig).convert_opengl());
-	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
-
-
+	
 	vector<int> colors2 = { 17, 18, 19, 20, 21 };
 	GLGameObject triangle2 = GLGameObject(colors2, 0, faceElements, UniformId, UniformColorId, (big_triangle_2_translate * rotate90Left * scaleBig));
 	triangle2.draw();
-
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (big_triangle_2_translate * rotateRight * scaleNegative * scaleBig).convert_opengl());
-	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
 	vector<int> colors3 = { 22, 23, 24, 25, 26 };
 	GLGameObject triangle3 = GLGameObject(colors3, 0, faceElements, UniformId, UniformColorId, (translateMediumTriangle * rotateRight * scaleMedium));
 	triangle3.draw();
 
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (translateMediumTriangle * rotateRight * scaleMedium).convert_opengl());
-	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
-
 	vector<int> colors4 = { 27, 28, 29, 30, 31 };
 	GLGameObject triangle4 = GLGameObject(colors4, 0, faceElements, UniformId, UniformColorId, (smallTriangle1Translate * scaleSmall));
 	triangle4.draw();
-
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle1Translate * scaleSmall).convert_opengl());
-	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 
 	vector<int> colors5 = { 32, 33, 34, 35, 36 };
 	GLGameObject triangle5 = GLGameObject(colors5, 0, faceElements, UniformId, UniformColorId, (smallTriangle2Translate * scaleSmall));
 	triangle5.draw();
 
-
-	//bindNewColor();
-	//glUniformMatrix4fv(UniformId, 1, GL_FALSE, (smallTriangle2Translate * scaleSmall).convert_opengl());
-	//glDrawElements(GL_TRIANGLES, TRIANGLE_VERTICES, GL_UNSIGNED_BYTE, TRIANGLE_INDEX);
 }
 
 
