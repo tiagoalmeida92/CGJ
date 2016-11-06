@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const float mThreshold = (float)1.0e-5;
+
 struct Mat2 {
 	static const int size = 2;
 	static const int data_size = size * size;
@@ -83,8 +85,10 @@ struct Mat4 {
 	Mat4 operator + (const Mat4&);
 	Mat4 operator - (const Mat4&);
 	Mat4 operator * (const Mat4&);
+	Vec4 operator * (const Vec4&);
 
-	Mat4 transpose();
+	const Mat4 transpose();
+	void clean();
 
 	void operator +=(const Mat4 &);
 	void operator -=(const Mat4 &);

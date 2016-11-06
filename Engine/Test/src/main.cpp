@@ -4,6 +4,7 @@
 #include <iostream>
 #include <assert.h>
 #include <ctime>
+#include "qtrn_tests.hpp"
 
 using namespace std;
 
@@ -178,10 +179,10 @@ void testMat4() {
 }
 
 void testMatFactory() {
-	Mat3 identity = MatrixFactory::identity3();
-	Mat3 scalingMat = MatrixFactory::scaling3(Vec3(0.25f, 0.5f, 0.75f));
-	Mat4 translateMatrix = MatrixFactory::translate(Vec3(10, -4, 2));
-	Mat3 rotation = MatrixFactory::rotate3(Vec3(1, 0, 0), 3.14f / 2);
+	Mat3 identity = identity3();
+	Mat3 scalingMat = scaling3(Vec3(0.25f, 0.5f, 0.75f));
+	Mat4 translateMatrix = translate(Vec3(10, -4, 2));
+	Mat3 rotation = rotate3(Vec3(1, 0, 0), 3.14f / 2);
 
 	print(identity);
 	print(scalingMat);
@@ -198,12 +199,12 @@ void testRodrigues() {
 		Vec3(0, 2, 0),
 		Vec3(0, 0, 3)
 	};
-	Mat3 identity = MatrixFactory::identity3(); //todo
+	Mat3 identity = identity3(); //todo
 	Mat3 rotationMatrices[3];
 	for (size_t i = 0; i < 3; i++)
 	{
 		Vec3 normalized = axis[i].normalize();
-		Mat3 a = MatrixFactory::dual(normalized);
+		Mat3 a = dual(normalized);
 		
 		rotationMatrices[i] = identity 
 							+ (a * sin(angle))
@@ -222,21 +223,25 @@ void testRodrigues() {
 	}
 }
 
-int main() {
-	cout << "TESTES VEC2\n\n";
-	testVec2();
-	cout << "\nTESTES VEC3\n\n";
-	testVec3();
-	cout << "\nTESTES MAT2\n\n";
-	testMat2();
-	cout << "\nTESTES MAT3\n\n";
-	testMat3();
-	cout << "\nTESTES MAT4\n\n";
-	testMat4();
-	cout << "\nTESTES MAT FACTORY\n\n";
-	testMatFactory();
-	//testRodrigues();
 
+
+int main() {
+	//cout << "TESTES VEC2\n\n";
+	//testVec2();
+	//cout << "\nTESTES VEC3\n\n";
+	//testVec3();
+	//cout << "\nTESTES MAT2\n\n";
+	//testMat2();
+	//cout << "\nTESTES MAT3\n\n";
+	//testMat3();
+	//cout << "\nTESTES MAT4\n\n";
+	//testMat4();
+	//cout << "\nTESTES MAT FACTORY\n\n";
+	//testMatFactory();
+	//testRodrigues();
+	qtest1();
+	qtest2();
+	qtest3();
 	//Wait one last enter key before closing
 	getchar();
 	return 0;

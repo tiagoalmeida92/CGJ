@@ -218,3 +218,27 @@ istream& operator>> (istream &in, Vec3 &v) {
 	v.z = z;
 	return in;
 }
+
+//VEC 4
+
+Vec4 Vec4::normalize()
+{
+	Vec4 vn;
+	float s = 1 / (w * sqrt(x*x + y*y + z*z));
+	vn.x = x * s;
+	vn.y = y * s;
+	vn.z = z * s;
+	vn.w = 1.0f;
+	return vn;
+}
+
+bool Vec4::operator == (const Vec4& vec) {
+	return CMP_FLOAT(x, vec.x) && CMP_FLOAT(y, vec.y) && CMP_FLOAT(z, vec.z) && CMP_FLOAT(w, vec.w);
+}
+
+
+
+ostream& operator << (ostream& out, const Vec4 &v) {
+	out << "Vec4(" << v.x << "," << v.y << "," << v.z << "," << v.w << ")";
+	return out;
+}

@@ -499,8 +499,18 @@ Mat4 Mat4::operator*(const Mat4& mat)
 	return result;
 }
 
+Vec4 Mat4::operator *(const Vec4& vec)
+{
+	Vec4 result;
+	result.x = data[0] * vec.x + data[1] * vec.y + data[2] * vec.z + data[3] * vec.w;
+	result.y = data[4] * vec.x + data[5] * vec.y + data[6] * vec.z + data[7] * vec.w;
+	result.z = data[8] * vec.x + data[9] * vec.y + data[10] * vec.z + data[11] * vec.w;
+	result.w = data[12] * vec.x + data[13] * vec.y + data[14] * vec.z + data[15] * vec.w;
 
-Mat4 Mat4::transpose() {
+	return result;
+}
+
+const Mat4 Mat4::transpose() {
 	Mat4 result;
 	int i = 0;
 
@@ -518,7 +528,11 @@ Mat4 Mat4::transpose() {
 	return result;
 }
 
-
+void Mat4::clean() {
+	for (int i = 0; i < data_size; i++) {
+		if (fabs(data[i]) < mThreshold) data[i] = 0.0f;
+	}
+}
 
 
 void Mat4::operator += (const Mat4& mat) {

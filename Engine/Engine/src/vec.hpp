@@ -73,3 +73,18 @@ struct Vec3
 
 
 };
+
+struct Vec4
+{
+	float x;
+	float y;
+	float z;
+	float w;
+
+	Vec4 normalize();
+	
+	bool operator == (const Vec4& vec);
+
+	friend ostream& operator<< (ostream &out, const Vec4 &v);
+
+};
