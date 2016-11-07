@@ -242,6 +242,9 @@ int main() {
 	qtest1();
 	qtest2();
 	qtest3();
+	qtest4();
+	qtest5();
+	qtest6();
 	//Wait one last enter key before closing
 	getchar();
 	return 0;

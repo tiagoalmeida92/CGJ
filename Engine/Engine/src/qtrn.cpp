@@ -154,7 +154,7 @@ const Mat4 qtrn::GLMatrix()
 	return matrix;
 }
 
-const qtrn qtrn::lerp(const qtrn& q0, const qtrn& q1, float k)
+const qtrn lerp(const qtrn& q0, const qtrn& q1, float k)
 {
 	float cos_angle = q0.x*q1.x + q0.y*q1.y + q0.z*q1.z + q0.t*q1.t;
 	float k0 = 1.0f - k;
@@ -163,7 +163,7 @@ const qtrn qtrn::lerp(const qtrn& q0, const qtrn& q1, float k)
 	return qi.normalize();
 }
 
-const qtrn qtrn::slerp(const qtrn& q0, const qtrn& q1, float k)
+const qtrn slerp(const qtrn& q0, const qtrn& q1, float k)
 {
 	float angle = acos(q0.x*q1.x + q0.y*q1.y + q0.z*q1.z + q0.t*q1.t);
 	float k0 = sin((1 - k)*angle) / sin(angle);

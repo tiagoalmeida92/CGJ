@@ -30,8 +30,9 @@ struct qtrn
 
 
 	const Mat4 GLMatrix();
-	const qtrn lerp(const qtrn& q0, const qtrn& q1, float k);
-	const qtrn slerp(const qtrn& q0, const qtrn& q1, float k);
+
+	const friend qtrn lerp(const qtrn& q0, const qtrn& q1, float k);
+	const friend qtrn slerp(const qtrn& q0, const qtrn& q1, float k);
 
 	friend ostream& operator<< (ostream &out, const qtrn &v);
 	
