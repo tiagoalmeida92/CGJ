@@ -473,16 +473,16 @@ void qtest6()
 
 ///////////////////////////////////////////////////////////////////////
 
-int main(int argc, char* argv[])
-{
-	qtest1();
-	qtest2();
-	qtest3();
-	qtest4();
-	qtest5();
-	qtest6();
-
-	exit(EXIT_SUCCESS);
-}
+//int main(int argc, char* argv[])
+//{
+//	qtest1();
+//	qtest2();
+//	qtest3();
+//	qtest4();
+//	qtest5();
+//	qtest6();
+//
+//	exit(EXIT_SUCCESS);
+//}
 
 ///////////////////////////////////////////////////////////////////////

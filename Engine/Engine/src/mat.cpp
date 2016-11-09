@@ -483,15 +483,15 @@ float dotProduct(const Mat4* mat, int row, const Mat4* other, int column, int si
 	return result;
 }
 
-Mat4 Mat4::operator*(const Mat4& mat)
+Mat4 operator*(const Mat4& lhs, const Mat4& rhs)
 {
 	Mat4 result;
 	int i = 0;
-	for (size_t thisRow = 0; thisRow < size; thisRow++)
+	for (size_t thisRow = 0; thisRow < lhs.size; thisRow++)
 	{
-		for (size_t otherColumn = 0; otherColumn < size; otherColumn++)
+		for (size_t otherColumn = 0; otherColumn < lhs.size; otherColumn++)
 		{
-			float dotResult = dotProduct(this, thisRow, &mat, otherColumn, size);
+			float dotResult = dotProduct(&lhs, thisRow, &rhs, otherColumn, lhs.size);
 			result.data[i] = dotResult;
 			i++;
 		}

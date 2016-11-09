@@ -1,31 +1,20 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// Assignment consists in the following:
+// Using quaternions to rotate in 3D.
 //
-// - Create the following changes to your scene, making it fully 3D:
-//   - Extrude your TANs into the 3rd dimension. The TANs should have
-//     slightly different "heights".
-//   - The new faces of each TAN should share the same hue as the 
-//     original top face color but have different levels of saturation 
-//     and brightness (use an external app if needed).
-//
-// - Add the following functionality:
-//   - Create a View Matrix from (eye, center, up) parameters.
-//   - Create an Orthographic Projection Matrix from (left-right, 
-//     bottom-top, near-far) parameters.
-//   - Create a Perspective Projection Matrix from (fovy, aspect,
-//     nearZ, farZ) parameters.
-//
-// - Add the following dynamics to the application:
-//   - Create a free 3D camera controlled by the mouse allowing to 
-//     visualize the scene through all its angles.
-//   - Change perspective from orthographic to perspective and back as
-//     a response to pressing the key 'p'.
+// Assignment: 1. Create a class for Quaternions.
+//             2. Create a scene with a camera rotating around an 
+//                object at the origin and pointing towards it. 
+//                Do NOT use "gluLookAt", use rotation matrices!
+//             3. Gimbal lock mode ON: use Translation + Rotation 
+//                matrices (e.g. Euler angles, Rodrigues’ formula). 
+//             4. Gimbal lock mode OFF: use Quaternions to produce a 
+//                transformation matrix to avoid gimbal lock.
+//             5. Switch between modes by pressing the 'g' key.
 //
 // (c) 2013-16 by Carlos Martinho
 //
 ///////////////////////////////////////////////////////////////////////
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -36,6 +25,7 @@
 #include "vec.hpp"
 #include "matrix_factory.hpp"
 #include "GLGameObject.hpp"
+#include "qtrn.hpp"
 
 #define CAPTION "Hello Modern 2D World"
 
@@ -257,9 +247,6 @@ void destroyBufferObjects()
 #define SQUARE_INDEX 24
 #define PARALLELOGRAM_INDEX 60
 
-#define TRIANGLE_VERTICES 24
-#define CUBE_VERTICES 36
-#define PARALLEGRAM_VERTICES 36
 
 #define INDEX(idx) (void*)idx
 
@@ -267,7 +254,7 @@ Mat4 xViewMatrixRotation = identity4();
 Mat4 yViewMatrixRotation = identity4();
 Mat4 zViewMatrixRotation = identity4();
 
-Vec3 eye = { 3, 3, 3 };
+Vec3 eye = { 0, 0, 5 };
 Vec3 center = { 0, 0, 0 };
 Vec3 up = { 0, 1, 0 };
 
@@ -275,7 +262,7 @@ Mat4 viewMatrix = lookAt(eye, center, up);
 
 Mat4 orthoMatrix = ortho(-2, 2, -2, 2, 1, 10);
 Mat4 perspectiveMatrix = perspective(30, (float)640 / 480, 1, 10);
-Mat4* currentPerspective = &perspectiveMatrix;
+Mat4* currentProjection = &perspectiveMatrix;
 
 
 void drawTriangles() {
@@ -320,6 +307,10 @@ void drawParalelogram() {
 	paralellogram.draw();
 }
 
+bool gimbalLock = true;
+float xDegrees = 0;
+float yDegrees = 0;
+float zDegrees = 0;
 
 void drawScene()
 {
@@ -329,9 +320,19 @@ void drawScene()
 
 	viewMatrix = lookAt(eye, center, up);
 
+	Mat4 rotations;
+	if (gimbalLock) {
+		rotations = xViewMatrixRotation * yViewMatrixRotation * zViewMatrixRotation;
+	} else {
+		qtrn qtX = fromAngleAxis(xDegrees, Vec4{ 1,0,0,1 });
+		qtrn qtY = fromAngleAxis(yDegrees, Vec4{ 0,1,0,1 });
+		qtrn qtZ = fromAngleAxis(zDegrees, Vec4{ 0, 0, 1, 1 });
+		rotations = qtX.GLMatrix() * qtY.GLMatrix() * qtZ.GLMatrix();
+	}
+
 	glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), (viewMatrix * xViewMatrixRotation * yViewMatrixRotation * zViewMatrixRotation).convert_opengl());
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Mat4), sizeof(Mat4), currentPerspective->convert_opengl());
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), (viewMatrix * rotations).convert_opengl());
+	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Mat4), sizeof(Mat4), currentProjection->convert_opengl());
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	glBindVertexArray(VaoId);
@@ -393,9 +394,7 @@ void timer(int value)
 int clicked = -1;
 int mouseX;
 int mouseY;
-float xDegrees = 0;
-float yDegrees = 0;
-float zDegrees = 0;
+
 
 #define OFFSET_CAMERA 5.0f
 #define TO_RAD(f) (f * (PI / 180))
@@ -415,23 +414,25 @@ void onMouse(int button, int state, int x, int y)
 		zDegrees += OFFSET_CAMERA;
 	}
 	zViewMatrixRotation = rotate4(Vec3(0, 0, 1), TO_RAD(zDegrees));
-	
+	cout << xDegrees << " " << yDegrees << " " << zDegrees << endl;
 }
 
 #define EYE_OFFSET 0.1f
 
 void onMotion(int x, int y) {
-	if (mouseX < x) {
-		xDegrees += OFFSET_CAMERA;
-	}
-	else if(mouseX > x) {
-		xDegrees -= OFFSET_CAMERA;
-	}
-	if (mouseY < y) {
+	if (x > mouseX) {
+		
 		yDegrees += OFFSET_CAMERA;
 	}
-	else if (mouseY > y) {
+	else if(x < mouseX) {
+		
 		yDegrees -= OFFSET_CAMERA;
+	}
+	if (y > mouseY) {
+		xDegrees += OFFSET_CAMERA;
+	}
+	else if (y < mouseY) {
+		xDegrees -= OFFSET_CAMERA;
 	}
 
 	xViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(xDegrees));
@@ -443,28 +444,55 @@ void onMotion(int x, int y) {
 
 void onKey(unsigned char key, int x, int y) {
 	if (key == 'p') {
-		if (currentPerspective == &orthoMatrix) {
-			currentPerspective = &perspectiveMatrix;
+		if (currentProjection == &orthoMatrix) {
+			currentProjection = &perspectiveMatrix;
 		}
 		else {
-			currentPerspective = &orthoMatrix;
+			currentProjection = &orthoMatrix;
 		}
 	}
-	if (key == 'w') {
-		eye.x -= EYE_OFFSET;
-		eye.y -= EYE_OFFSET;
-		eye.z -= EYE_OFFSET;
+	if (key == 'g') {
+		gimbalLock = !gimbalLock;
 	}
-	else if (key == 's') {
-		eye.x += EYE_OFFSET;
-		eye.y += EYE_OFFSET;
-		eye.z += EYE_OFFSET;
+
+	//if (key == 'w') {
+	//	eye.x -= EYE_OFFSET;
+	//	eye.y -= EYE_OFFSET;
+	//	eye.z -= EYE_OFFSET;
+	//}
+	//else if (key == 's') {
+	//	eye.x += EYE_OFFSET;
+	//	eye.y += EYE_OFFSET;
+	//	eye.z += EYE_OFFSET;
+	//}
+	else if (key == 'r') {
+		eye.x = 0;
+		eye.y = 0;
+		eye.z = 5;
+		xDegrees = yDegrees = zDegrees = 0;
+		xViewMatrixRotation = yViewMatrixRotation = zViewMatrixRotation = identity4();
 	}
-	else if (key == 'a') {
-		eye.x = 3;
-		eye.y = 3;
-		eye.z = 3;
+}
+
+void onArrows(int key, int x, int y) {
+	switch (key)
+	{
+		case GLUT_KEY_UP:
+			xDegrees -= OFFSET_CAMERA;
+			break;
+		case GLUT_KEY_DOWN:
+			xDegrees += OFFSET_CAMERA;
+			break;
+		case GLUT_KEY_LEFT:
+			yDegrees -= OFFSET_CAMERA;
+			break;
+		case GLUT_KEY_RIGHT:
+			yDegrees += OFFSET_CAMERA;
+			break;
 	}
+	xViewMatrixRotation = rotate4(Vec3(1, 0, 0), TO_RAD(xDegrees));
+	yViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(yDegrees));
+	cout << xDegrees << " " << yDegrees << " " << zDegrees << endl;
 }
 
 /////////////////////////////////////////////////////////////////////// SETUP
@@ -479,6 +507,7 @@ void setupCallbacks()
 	glutKeyboardFunc(onKey);
 	glutMouseFunc(onMouse);
 	glutMotionFunc(onMotion);
+	glutSpecialFunc(onArrows);
 }
 
 void checkOpenGLInfo()
@@ -546,11 +575,12 @@ void init(int argc, char* argv[])
 	setupCallbacks();
 }
 
-//int main(int argc, char* argv[])
-//{
-//	init(argc, argv);
-//	glutMainLoop();
-//	exit(EXIT_SUCCESS);
-//}
+int main(int argc, char* argv[])
+{
+	init(argc, argv);
+	glutMainLoop();
+	getchar();
+	exit(EXIT_SUCCESS);
+}
 
 ///////////////////////////////////////////////////////////////////////

@@ -84,7 +84,7 @@ struct Mat4 {
 
 	Mat4 operator + (const Mat4&);
 	Mat4 operator - (const Mat4&);
-	Mat4 operator * (const Mat4&);
+	
 	Vec4 operator * (const Vec4&);
 
 	const Mat4 transpose();
@@ -96,6 +96,7 @@ struct Mat4 {
 	void operator *=(const float);
 
 	friend Mat4 operator * (float, const Mat4&);
+	friend Mat4 operator * (const Mat4&, const Mat4&);
 
 	friend ostream& operator<< (ostream&, const Mat4&);
 	friend istream& operator>> (istream&, Mat4&);
