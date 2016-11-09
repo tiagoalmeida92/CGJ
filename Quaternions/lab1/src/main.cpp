@@ -27,7 +27,7 @@
 #include "GLGameObject.hpp"
 #include "qtrn.hpp"
 
-#define CAPTION "Hello Modern 2D World"
+#define CAPTION "Hello Modern 3D World"
 
 int WinX = 640, WinY = 480;
 int WindowHandle = 0;
@@ -408,58 +408,43 @@ void timer(int value)
 
 /////////////////////////////////////////////////////////////////////// SETUP
 
-
-
 int clicked = -1;
 int mouseX;
 int mouseY;
 
-
-
-
+#define EYE_OFFSET 0.1f
 
 //button 0 LEFT
 //button 1 MIDDLE
 //button 2 RIGHT
+//button 3 mwhell up
+//button 4 mwhell down
 void onMouse(int button, int state, int x, int y)
 {
 	if (state == 0) {
 		return;
 	}
 	if (button == 3) {
-		zDegrees -= OFFSET_CAMERA;
+		eye.z -= EYE_OFFSET;
 	}
 	else if (button == 4) {
-		zDegrees += OFFSET_CAMERA;
+		eye.z += EYE_OFFSET;
 	}
-	zViewMatrixRotation = rotate4(Vec3(0, 0, 1), TO_RAD(zDegrees));
-	cout << xDegrees << " " << yDegrees << " " << zDegrees << endl;
 }
-
-#define EYE_OFFSET 0.1f
 
 void onMotion(int x, int y) {
 	if (x > mouseX) {
-		
-		yDegrees += OFFSET_CAMERA;
 		frameRotationY += OFFSET_CAMERA;
 	}
 	else if(x < mouseX) {
-		
-		yDegrees -= OFFSET_CAMERA;
 		frameRotationY -= OFFSET_CAMERA;
 	}
 	if (y > mouseY) {
-		xDegrees += OFFSET_CAMERA;
 		frameRotationX += OFFSET_CAMERA;
 	}
 	else if (y < mouseY) {
-		xDegrees -= OFFSET_CAMERA;
 		frameRotationX -= OFFSET_CAMERA;
 	}
-
-	//xViewMatrixRotation = rotate4(Vec3(1, 0, 0), TO_RAD(xDegrees));
-	//yViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(yDegrees));
 	mouseX = x;
 	mouseY = y;
 	
@@ -476,46 +461,17 @@ void onKey(unsigned char key, int x, int y) {
 	}
 	if (key == 'g') {
 		gimbalLock = !gimbalLock;
-	}
-
-	//if (key == 'w') {
-	//	eye.x -= EYE_OFFSET;
-	//	eye.y -= EYE_OFFSET;
-	//	eye.z -= EYE_OFFSET;
-	//}
-	//else if (key == 's') {
-	//	eye.x += EYE_OFFSET;
-	//	eye.y += EYE_OFFSET;
-	//	eye.z += EYE_OFFSET;
-	//}
-	else if (key == 'r') {
+	} else if (key == 'r') {
 		eye.x = 0;
 		eye.y = 0;
 		eye.z = 5;
-		xDegrees = yDegrees = zDegrees = 0;
+		q = qtrn();
 		xViewMatrixRotation = yViewMatrixRotation = zViewMatrixRotation = identity4();
 	}
 }
 
 void onArrows(int key, int x, int y) {
-	/*switch (key)
-	{
-		case GLUT_KEY_UP:
-			xDegrees -= OFFSET_CAMERA;
-			break;
-		case GLUT_KEY_DOWN:
-			xDegrees += OFFSET_CAMERA;
-			break;
-		case GLUT_KEY_LEFT:
-			yDegrees -= OFFSET_CAMERA;
-			break;
-		case GLUT_KEY_RIGHT:
-			yDegrees += OFFSET_CAMERA;
-			break;
-	}
-	xViewMatrixRotation = rotate4(Vec3(1, 0, 0), TO_RAD(xDegrees));
-	yViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(yDegrees));
-	cout << xDegrees << " " << yDegrees << " " << zDegrees << endl;*/
+
 }
 
 /////////////////////////////////////////////////////////////////////// SETUP
