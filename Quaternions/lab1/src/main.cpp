@@ -71,9 +71,9 @@ Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, -1.0f));
 Mat4 scaleBig = scaling4(Vec3(1.3f, 1.3f, 1.5f));
 Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0.6f));
 
-Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI / 2);
-Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), ((3 * PI) / 2));
-Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), PI);
+Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), 90);
+Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), 270);
+Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), 180);
 
 /////////////////////////////////////////////////////////////////////// ERRORS
 
@@ -312,9 +312,9 @@ float xDegrees = 0;
 float yDegrees = 0;
 float zDegrees = 0;
 
-qtrn q;// = fromAngleAxis(0, Vec4{ 1,0,0,0 });
+qtrn q;
 
-#define OFFSET_CAMERA 5.0f
+#define OFFSET_CAMERA 4.0f
 #define TO_RAD(f) (f * (PI / 180))
 
 int frameRotationX;
@@ -331,12 +331,12 @@ void drawScene()
 	//Spherical camera
 
 	//Euler
-	xViewMatrixRotation = xViewMatrixRotation * rotate4(Vec3{ 1,0,0 }, TO_RAD(frameRotationX));
-	yViewMatrixRotation = yViewMatrixRotation * rotate4(Vec3{ 0,1,0 }, TO_RAD(frameRotationY));
+	xViewMatrixRotation = rotate4(Vec3{ 1,0,0 }, frameRotationX) * xViewMatrixRotation;
+	yViewMatrixRotation = rotate4(Vec3{ 0,1,0 }, frameRotationY) * yViewMatrixRotation;
 	//Quaternions
-	qtrn qtX = fromAngleAxis(-frameRotationX, Vec4{ 1,0,0,1 });
-	qtrn qtY = fromAngleAxis(-frameRotationY, Vec4{ 0,1,0,1 });
-	q = q * qtX * qtY;
+	qtrn qtX = fromAngleAxis(-frameRotationX, Vec4{ 1,0,0,0 });
+	qtrn qtY = fromAngleAxis(-frameRotationY, Vec4{ 0,1,0,0 });
+	q = q * qtX * qtY ;
 
 	Mat4 rotations;
 	if (gimbalLock) {
@@ -461,6 +461,7 @@ void onKey(unsigned char key, int x, int y) {
 	}
 	if (key == 'g') {
 		gimbalLock = !gimbalLock;
+		cout << "Gimbal " << gimbalLock << endl;
 	} else if (key == 'r') {
 		eye.x = 0;
 		eye.y = 0;

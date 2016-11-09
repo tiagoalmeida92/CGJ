@@ -1,5 +1,8 @@
 #include "matrix_factory.hpp"
 
+#define DEGREES_TO_RADIANS 0.01745329251994329547
+#define RADIANS_TO_DEGREES 57.29577951308232185913
+
 Mat3 identity3() {
 	return Mat3{
 		1, 0, 0,
@@ -49,6 +52,7 @@ Mat3 dual(Vec3& axis) {
 //Rodrigues formula
 Mat3 rotate3(Vec3& axis, float angle) {
 	Mat3 a = dual(axis);
+	angle = angle * DEGREES_TO_RADIANS;
 	Mat3 rodrigues = identity3() + sin(angle) * a + (1 - cos(angle)) * (a * a);
 	return rodrigues;
 
