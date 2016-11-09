@@ -37,7 +37,7 @@
 #include "matrix_factory.hpp"
 #include "GLGameObject.hpp"
 
-#define CAPTION "Hello Modern 2D World"
+#define CAPTION "Hello Modern 3D World"
 
 int WinX = 640, WinY = 480;
 int WindowHandle = 0;

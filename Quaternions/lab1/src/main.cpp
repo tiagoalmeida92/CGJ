@@ -307,10 +307,18 @@ void drawParalelogram() {
 	paralellogram.draw();
 }
 
-bool gimbalLock = true;
+bool gimbalLock = false;
 float xDegrees = 0;
 float yDegrees = 0;
 float zDegrees = 0;
+
+qtrn q;// = fromAngleAxis(0, Vec4{ 1,0,0,0 });
+
+#define OFFSET_CAMERA 5.0f
+#define TO_RAD(f) (f * (PI / 180))
+
+int frameRotationX;
+int frameRotationY;
 
 void drawScene()
 {
@@ -320,15 +328,26 @@ void drawScene()
 
 	viewMatrix = lookAt(eye, center, up);
 
+	//Spherical camera
+
+	//Euler
+	xViewMatrixRotation = xViewMatrixRotation * rotate4(Vec3{ 1,0,0 }, TO_RAD(frameRotationX));
+	yViewMatrixRotation = yViewMatrixRotation * rotate4(Vec3{ 0,1,0 }, TO_RAD(frameRotationY));
+	//Quaternions
+	qtrn qtX = fromAngleAxis(-frameRotationX, Vec4{ 1,0,0,1 });
+	qtrn qtY = fromAngleAxis(-frameRotationY, Vec4{ 0,1,0,1 });
+	q = q * qtX * qtY;
+
 	Mat4 rotations;
 	if (gimbalLock) {
-		rotations = xViewMatrixRotation * yViewMatrixRotation * zViewMatrixRotation;
+		rotations = xViewMatrixRotation * yViewMatrixRotation;
 	} else {
-		qtrn qtX = fromAngleAxis(xDegrees, Vec4{ 1,0,0,1 });
-		qtrn qtY = fromAngleAxis(yDegrees, Vec4{ 0,1,0,1 });
-		qtrn qtZ = fromAngleAxis(zDegrees, Vec4{ 0, 0, 1, 1 });
-		rotations = qtX.GLMatrix() * qtY.GLMatrix() * qtZ.GLMatrix();
+		//Mat4 qtMatrix = q.GLMatrix();
+		rotations = q.GLMatrix();
 	}
+	frameRotationX = 0;
+	frameRotationY = 0;
+
 
 	glBindBuffer(GL_UNIFORM_BUFFER, VboId[2]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Mat4), (viewMatrix * rotations).convert_opengl());
@@ -396,8 +415,8 @@ int mouseX;
 int mouseY;
 
 
-#define OFFSET_CAMERA 5.0f
-#define TO_RAD(f) (f * (PI / 180))
+
+
 
 //button 0 LEFT
 //button 1 MIDDLE
@@ -423,20 +442,24 @@ void onMotion(int x, int y) {
 	if (x > mouseX) {
 		
 		yDegrees += OFFSET_CAMERA;
+		frameRotationY += OFFSET_CAMERA;
 	}
 	else if(x < mouseX) {
 		
 		yDegrees -= OFFSET_CAMERA;
+		frameRotationY -= OFFSET_CAMERA;
 	}
 	if (y > mouseY) {
 		xDegrees += OFFSET_CAMERA;
+		frameRotationX += OFFSET_CAMERA;
 	}
 	else if (y < mouseY) {
 		xDegrees -= OFFSET_CAMERA;
+		frameRotationX -= OFFSET_CAMERA;
 	}
 
-	xViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(xDegrees));
-	yViewMatrixRotation = rotate4(Vec3(1, 0, 0), TO_RAD(yDegrees));
+	//xViewMatrixRotation = rotate4(Vec3(1, 0, 0), TO_RAD(xDegrees));
+	//yViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(yDegrees));
 	mouseX = x;
 	mouseY = y;
 	
@@ -475,7 +498,7 @@ void onKey(unsigned char key, int x, int y) {
 }
 
 void onArrows(int key, int x, int y) {
-	switch (key)
+	/*switch (key)
 	{
 		case GLUT_KEY_UP:
 			xDegrees -= OFFSET_CAMERA;
@@ -492,7 +515,7 @@ void onArrows(int key, int x, int y) {
 	}
 	xViewMatrixRotation = rotate4(Vec3(1, 0, 0), TO_RAD(xDegrees));
 	yViewMatrixRotation = rotate4(Vec3(0, 1, 0), TO_RAD(yDegrees));
-	cout << xDegrees << " " << yDegrees << " " << zDegrees << endl;
+	cout << xDegrees << " " << yDegrees << " " << zDegrees << endl;*/
 }
 
 /////////////////////////////////////////////////////////////////////// SETUP

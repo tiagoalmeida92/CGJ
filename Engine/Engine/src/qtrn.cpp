@@ -5,6 +5,7 @@
 
 qtrn::qtrn()
 {
+	t = 1;
 }
 
 qtrn::qtrn(float t, float x, float y, float z) {
