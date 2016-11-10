@@ -56,6 +56,7 @@ struct Mat3 {
 
 	Mat3 transpose();
 	Mat3 inverse();
+	void clean();
 	float determinant();
 
 	void operator +=(const Mat3 &);

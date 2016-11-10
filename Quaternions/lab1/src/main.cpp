@@ -334,8 +334,8 @@ void drawScene()
 	xViewMatrixRotation = rotate4(Vec3{ 1,0,0 }, frameRotationX) * xViewMatrixRotation;
 	yViewMatrixRotation = rotate4(Vec3{ 0,1,0 }, frameRotationY) * yViewMatrixRotation;
 	//Quaternions
-	qtrn qtX = fromAngleAxis(-frameRotationX, Vec4{ 1,0,0,0 });
-	qtrn qtY = fromAngleAxis(-frameRotationY, Vec4{ 0,1,0,0 });
+	qtrn qtX = fromAngleAxis(-frameRotationX, Vec4{ 1,0,0,1 });
+	qtrn qtY = fromAngleAxis(-frameRotationY, Vec4{ 0,1,0,1 });
 	q = q * qtX * qtY ;
 
 	Mat4 rotations;

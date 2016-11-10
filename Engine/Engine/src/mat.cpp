@@ -102,7 +102,11 @@ Vec2 Mat2::operator *(const Vec2& vec)
 	return result;
 }
 
-
+void Mat3::clean() {
+	for (int i = 0; i < data_size; i++) {
+		if (fabs(data[i]) < mThreshold) data[i] = 0.0f;
+	}
+}
 
 Mat2 Mat2::transpose() {
 	Mat2 result;

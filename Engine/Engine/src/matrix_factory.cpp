@@ -42,11 +42,13 @@ Mat4 translate(Vec3& vec) {
 }
 
 Mat3 dual(Vec3& axis) {
-	return Mat3{
-			0, -axis.z, axis.y,
-			axis.z, 0, -axis.x,
-			-axis.y, axis.x, 0
+	Mat3 dual = {
+		0, -axis.z, axis.y,
+		axis.z, 0, -axis.x,
+		-axis.y, axis.x, 0
 	};
+	dual.clean();
+	return dual;
 }
 
 //Rodrigues formula

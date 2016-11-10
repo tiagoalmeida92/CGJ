@@ -18,7 +18,7 @@ qtrn::qtrn(float t, float x, float y, float z) {
 
 const qtrn fromAngleAxis(float theta, Vec4& axis)
 {
-	Vec4 axisn = axis;
+	Vec4 axisn = axis.normalize();
 
 	qtrn q;
 	float a = theta * (float)DEGREES_TO_RADIANS;
