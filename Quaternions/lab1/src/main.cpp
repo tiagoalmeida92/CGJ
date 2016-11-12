@@ -334,16 +334,16 @@ void drawScene()
 	xViewMatrixRotation = rotate4(Vec3{ 1,0,0 }, frameRotationX) * xViewMatrixRotation;
 	yViewMatrixRotation = rotate4(Vec3{ 0,1,0 }, frameRotationY) * yViewMatrixRotation;
 	//Quaternions
-	qtrn qtX = fromAngleAxis(-frameRotationX, Vec4{ 1,0,0,1 });
-	qtrn qtY = fromAngleAxis(-frameRotationY, Vec4{ 0,1,0,1 });
-	q = q * qtX * qtY ;
+	qtrn qtX = fromAngleAxis(frameRotationX, Vec4{ 1,0,0,1 });
+	qtrn qtY = fromAngleAxis(frameRotationY, Vec4{ 0,1,0,1 });
+	q = qtX * qtY * q;
 
 	Mat4 rotations;
 	if (gimbalLock) {
 		rotations = xViewMatrixRotation * yViewMatrixRotation;
 	} else {
 		//Mat4 qtMatrix = q.GLMatrix();
-		rotations = q.GLMatrix();
+		rotations = q.toMatrix();
 	}
 	frameRotationX = 0;
 	frameRotationY = 0;

@@ -115,7 +115,7 @@ const qtrn operator * (const qtrn& q0, const qtrn& q1)
 	return q;
 }
 
-const Mat4 qtrn::GLMatrix()
+const Mat4 qtrn::toMatrix()
 {
 	qtrn qn = normalize();
 
@@ -132,17 +132,17 @@ const Mat4 qtrn::GLMatrix()
 	Mat4 matrix;
 
 	matrix.data[0] = 1.0f - 2.0f * (yy + zz);
-	matrix.data[1] = 2.0f * (xy + zt);
-	matrix.data[2] = 2.0f * (xz - yt);
+	matrix.data[1] = 2.0f * (xy - zt);
+	matrix.data[2] = 2.0f * (xz + yt);
 	matrix.data[3] = 0.0f;
 
-	matrix.data[4] = 2.0f * (xy - zt);
+	matrix.data[4] = 2.0f * (xy + zt);
 	matrix.data[5] = 1.0f - 2.0f * (xx + zz);
-	matrix.data[6] = 2.0f * (yz + xt);
+	matrix.data[6] = 2.0f * (yz - xt);
 	matrix.data[7] = 0.0f;
 
-	matrix.data[8] = 2.0f * (xz + yt);
-	matrix.data[9] = 2.0f * (yz - xt);
+	matrix.data[8] = 2.0f * (xz - yt);
+	matrix.data[9] = 2.0f * (yz + xt);
 	matrix.data[10] = 1.0f - 2.0f * (xx + yy);
 	matrix.data[11] = 0.0f;
 

@@ -29,7 +29,7 @@ struct qtrn
 	const friend qtrn operator *(const qtrn& q0, const qtrn& q1);
 
 
-	const Mat4 GLMatrix();
+	const Mat4 toMatrix();
 
 	const friend qtrn lerp(const qtrn& q0, const qtrn& q1, float k);
 	const friend qtrn slerp(const qtrn& q0, const qtrn& q1, float k);
