@@ -53,7 +53,7 @@ GLuint VaoId;
 GLuint VboVertices, VboTexcoords, VboNormals;
 
 GLuint VertexShaderId, FragmentShaderId, ProgramId;
-GLint ModelMatrix_UId, ViewMatrix_UId, ProjectionMatrix_UId;
+GLint Matrix_UId;
 
 Shader shader;
 
@@ -113,7 +113,7 @@ void checkOpenGLError(std::string error)
 
 void createShaderProgram()
 {
-	shader = CreateProgram("glscripts/triangle_new.vert", "glscripts/triangle.frag");
+	shader = CreateProgram("glscripts/triangle.vert", "glscripts/triangle.frag");
 	if (shader.compiled) {
 		ProgramId = shader.ProgramId;
 
@@ -123,9 +123,7 @@ void createShaderProgram()
 		if (mesh.NormalsLoaded)
 			BindAttributeLocation(ProgramId, NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
-		ModelMatrix_UId = GetUniformLocation(ProgramId, "ModelMatrix");
-		ViewMatrix_UId = GetUniformLocation(ProgramId, "ViewMatrix");
-		ProjectionMatrix_UId = GetUniformLocation(ProgramId, "ProjectionMatrix");
+		Matrix_UId = GetUniformLocation(ProgramId, "Matrix");
 	}
 
 	checkOpenGLError("ERROR: Could not create shaders.");
@@ -202,7 +200,7 @@ Mat4 xViewMatrixRotation = identity4();
 Mat4 yViewMatrixRotation = identity4();
 Mat4 zViewMatrixRotation = identity4();
 
-Vec3 eye = { 0, 0, 5 };
+Vec3 eye = { 0, 0, 8 };
 Vec3 center = { 0, 0, 0 };
 Vec3 up = { 0, 1, 0 };
 
@@ -262,42 +260,24 @@ float zDegrees = 0;
 
 qtrn q;
 
-#define OFFSET_CAMERA 4.0f
+#define OFFSET_CAMERA 4.5f
 #define TO_RAD(f) (f * (PI / 180))
 
 int frameRotationX;
 int frameRotationY;
-
-typedef GLfloat Matrix[16];
-
-
-const Matrix ModelMatrix = {
-	1.0f,  0.0f,  0.0f,  0.0f,
-	0.0f,  1.0f,  0.0f,  0.0f,
-	0.0f,  0.0f,  1.0f,  0.0f,
-	0.0f,  0.0f,  0.0f,  1.0f
-}; // Column Major
-
-
-   // Perspective Fovy(30) Aspect(640/480) NearZ(1) FarZ(10)
-const Matrix ProjectionMatrix2 = {
-	2.79f,  0.00f,  0.00f,  0.00f,
-	0.00f,  3.73f,  0.00f,  0.00f,
-	0.00f,  0.00f, -1.22f, -1.00f,
-	0.00f,  0.00f, -2.22f,  0.00f
-}; // Column Major
 
 void drawScene()
 {
 	glBindVertexArray(VaoId);
 	glUseProgram(ProgramId);
 
-	glUniformMatrix4fv(ModelMatrix_UId, 1, GL_FALSE, ModelMatrix);
-	Mat4 rotate = rotate4(Vec3(0, 1, 0), 0);
-	Mat4 rotate90X = rotate4(Vec3(1, 0, 0), 0);
-	Mat4 viewMatrix = lookAt(Vec3(0, 2, 7), Vec3(0, 0, 0), Vec3(0, 1, 0));// *rotate * rotate90X;
-	glUniformMatrix4fv(ViewMatrix_UId, 1, GL_FALSE, viewMatrix.convert_opengl());
-	glUniformMatrix4fv(ProjectionMatrix_UId, 1, GL_FALSE, ProjectionMatrix2);
+	qtrn qtX = fromAngleAxis(frameRotationX, Vec4{ 1,0,0,1 });
+	qtrn qtY = fromAngleAxis(frameRotationY, Vec4{ 0,1,0,1 });
+	q = qtX * qtY * q;
+	frameRotationX = frameRotationY = 0;
+
+	glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, (*currentProjection * viewMatrix * q.toMatrix()).convert_opengl());
+	
 	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mesh.Vertices.size());
 
 	glUseProgram(0);
