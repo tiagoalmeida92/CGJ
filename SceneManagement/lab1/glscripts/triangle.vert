@@ -1,6 +1,9 @@
 #version 330 core
 
 in vec3 in_Position;
+in vec3 inNormal;
+
+out vec3 ex_Normal;
 
 uniform mat4 Matrix;
 

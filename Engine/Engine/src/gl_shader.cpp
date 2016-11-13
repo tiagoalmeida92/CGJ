@@ -1,7 +1,7 @@
 #include "gl_shader.hpp"
 
 
-string readShaderProgram(char * path) {
+string read(char * path) {
 	string line;
 	string result;
 	ifstream myfile(path);
@@ -40,8 +40,8 @@ void logShaderError(GLint shaderId) {
 }
 
 Shader CreateProgram(char* vertexShaderFile, char* fragmentShaderFile) {
-	string vertexShader = readShaderProgram(vertexShaderFile);
-	string fragShader = readShaderProgram(fragmentShaderFile);
+	string vertexShader = read(vertexShaderFile);
+	string fragShader = read(fragmentShaderFile);
 	const char* vertexShaderPtr = vertexShader.c_str();
 	const char* fragShaderPtr = fragShader.c_str();
 	int vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
@@ -71,7 +71,6 @@ Shader CreateProgram(char* vertexShaderFile, char* fragmentShaderFile) {
 	int programId = glCreateProgram();
 	glAttachShader(programId, vertexShaderId);
 	glAttachShader(programId, fragmentShaderId);
-	glLinkProgram(programId);
 
 	
 	shader.compiled = true;

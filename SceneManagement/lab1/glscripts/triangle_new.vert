@@ -1,6 +1,7 @@
 #version 330 core
 
 in vec3 inPosition;
+in vec3 inTexcoord;
 in vec3 inNormal;
 
 out vec3 ex_Normal;
