@@ -71,7 +71,7 @@ Shader CreateProgram(char* vertexShaderFile, char* fragmentShaderFile) {
 	int programId = glCreateProgram();
 	glAttachShader(programId, vertexShaderId);
 	glAttachShader(programId, fragmentShaderId);
-
+	glLinkProgram(programId);
 	
 	shader.compiled = true;
 	shader.ProgramId = programId;

@@ -357,7 +357,7 @@ void drawScene()
 	glBindVertexArray(VaoId);
 	glUseProgram(ProgramId);
 
-
+	glUniformMatrix4fv(UniformId, 1, GL_FALSE, (I).convert_opengl());
 	drawSquares();
 	drawParalelogram();
 	drawTriangles();
