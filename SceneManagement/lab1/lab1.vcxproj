@@ -151,6 +151,10 @@
   <ItemGroup>
     <ClInclude Include="src\GLGameObject.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\matrixstack.cpp" />
+    <Text Include="src\SceneManager.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

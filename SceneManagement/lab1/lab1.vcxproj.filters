@@ -37,4 +37,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\matrixstack.cpp" />
+    <Text Include="src\SceneManager.cpp" />
+  </ItemGroup>
 </Project>

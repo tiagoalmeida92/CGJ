@@ -54,6 +54,7 @@ GLuint VboVertices, VboTexcoords, VboNormals;
 
 GLuint VertexShaderId, FragmentShaderId, ProgramId;
 GLint Matrix_UId;
+GLint Camera_UId;
 
 Shader shader;
 
@@ -124,6 +125,7 @@ void createShaderProgram()
 			BindAttributeLocation(ProgramId, NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
 		Matrix_UId = GetUniformLocation(ProgramId, "Matrix");
+		Camera_UId = GetUniformLocation(ProgramId, "Camera");
 	}
 
 	checkOpenGLError("ERROR: Could not create shaders.");
@@ -276,9 +278,11 @@ void drawScene()
 	q = qtX * qtY * q;
 	frameRotationX = frameRotationY = 0;
 
-	glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, (*currentProjection * viewMatrix * q.toMatrix()).convert_opengl());
+	glUniformMatrix4fv(Camera_UId, 1, GL_FALSE, (*currentProjection * viewMatrix).convert_opengl());
+	Mat4 model = q.toMatrix();
+	glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, model.convert_opengl());
 	
-	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)mesh.Vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, 24);
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -468,7 +472,8 @@ void init(int argc, char* argv[])
 	setupGLUT(argc, argv);
 	setupGLEW();
 	setupOpenGL();
-	mesh = Mesh("meshes/monkey.obj");
+	//mesh = Mesh("meshes/cube.obj");
+	mesh = Mesh("meshes/triangle.obj");
 	createShaderProgram();
 	createBufferObjects();
 	setupCallbacks();
