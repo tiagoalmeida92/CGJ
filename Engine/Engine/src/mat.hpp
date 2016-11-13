@@ -1,5 +1,4 @@
 #pragma once
-#include "utils.hpp"
 #include "vec.hpp"
 #include <iostream>
 #include <string>
