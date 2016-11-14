@@ -45,9 +45,6 @@ unsigned int FrameCount = 0;
 
 Mesh mesh;
 
-#define VERTICES 0
-#define TEXCOORDS 1
-#define NORMALS 2
 
 GLuint VaoId;
 GLuint VboVertices, VboTexcoords, VboNormals;
@@ -118,11 +115,11 @@ void createShaderProgram()
 	if (shader.compiled) {
 		ProgramId = shader.ProgramId;
 
-		BindAttributeLocation(ProgramId, VERTICES, "inPosition");
+		BindAttributeLocation(ProgramId, Mesh::VERTICES, "inPosition");
 		if (mesh.TexcoordsLoaded)
-			BindAttributeLocation(ProgramId, TEXCOORDS, "inTexcoord");
+			BindAttributeLocation(ProgramId, Mesh::TEXCOORDS, "inTexcoord");
 		if (mesh.NormalsLoaded)
-			BindAttributeLocation(ProgramId, NORMALS, "inNormal");
+			BindAttributeLocation(ProgramId, Mesh::NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
 		Matrix_UId = GetUniformLocation(ProgramId, "Matrix");
 		Camera_UId = GetUniformLocation(ProgramId, "Camera");
@@ -139,52 +136,43 @@ void destroyShaderProgram()
 
 	checkOpenGLError("ERROR: Could not destroy shaders.");
 }
+//
+//void createBufferObjects()
+//{
+//	glGenVertexArrays(1, &VaoId);
+//	glBindVertexArray(VaoId);
+//	{
+//		glGenBuffers(1, &VboVertices);
+//		glBindBuffer(GL_ARRAY_BUFFER, VboVertices);
+//		glBufferData(GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof(Vertex), &mesh.Vertices[0], GL_STATIC_DRAW);
+//		glEnableVertexAttribArray(VERTICES);
+//		glVertexAttribPointer(VERTICES, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+//	}
+//	if (mesh.TexcoordsLoaded)
+//	{
+//		glGenBuffers(1, &VboTexcoords);
+//		glBindBuffer(GL_ARRAY_BUFFER, VboTexcoords);
+//		glBufferData(GL_ARRAY_BUFFER, mesh.Texcoords.size() * sizeof(Texcoord), &mesh.Texcoords[0], GL_STATIC_DRAW);
+//		glEnableVertexAttribArray(TEXCOORDS);
+//		glVertexAttribPointer(TEXCOORDS, 2, GL_FLOAT, GL_FALSE, sizeof(Texcoord), 0);
+//	}
+//	if (mesh.NormalsLoaded)
+//	{
+//		glGenBuffers(1, &VboNormals);
+//		glBindBuffer(GL_ARRAY_BUFFER, VboNormals);
+//		glBufferData(GL_ARRAY_BUFFER, mesh.Normals.size() * sizeof(Normal), &mesh.Normals[0], GL_STATIC_DRAW);
+//		glEnableVertexAttribArray(NORMALS);
+//		glVertexAttribPointer(NORMALS, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), 0);
+//	}
+//	glBindVertexArray(0);
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//
+//	checkOpenGLError("ERROR: Could not create VAOs and VBOs.");
+//}
 
-void createBufferObjects()
+void destroyMeshes()
 {
-	glGenVertexArrays(1, &VaoId);
-	glBindVertexArray(VaoId);
-	{
-		glGenBuffers(1, &VboVertices);
-		glBindBuffer(GL_ARRAY_BUFFER, VboVertices);
-		glBufferData(GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof(Vertex), &mesh.Vertices[0], GL_STATIC_DRAW);
-		glEnableVertexAttribArray(VERTICES);
-		glVertexAttribPointer(VERTICES, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	}
-	if (mesh.TexcoordsLoaded)
-	{
-		glGenBuffers(1, &VboTexcoords);
-		glBindBuffer(GL_ARRAY_BUFFER, VboTexcoords);
-		glBufferData(GL_ARRAY_BUFFER, mesh.Texcoords.size() * sizeof(Texcoord), &mesh.Texcoords[0], GL_STATIC_DRAW);
-		glEnableVertexAttribArray(TEXCOORDS);
-		glVertexAttribPointer(TEXCOORDS, 2, GL_FLOAT, GL_FALSE, sizeof(Texcoord), 0);
-	}
-	if (mesh.NormalsLoaded)
-	{
-		glGenBuffers(1, &VboNormals);
-		glBindBuffer(GL_ARRAY_BUFFER, VboNormals);
-		glBufferData(GL_ARRAY_BUFFER, mesh.Normals.size() * sizeof(Normal), &mesh.Normals[0], GL_STATIC_DRAW);
-		glEnableVertexAttribArray(NORMALS);
-		glVertexAttribPointer(NORMALS, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), 0);
-	}
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	checkOpenGLError("ERROR: Could not create VAOs and VBOs.");
-}
-
-void destroyBufferObjects()
-{
-	glBindVertexArray(VaoId);
-	glDisableVertexAttribArray(VERTICES);
-	glDisableVertexAttribArray(TEXCOORDS);
-	glDisableVertexAttribArray(NORMALS);
-	glDeleteBuffers(1, &VboVertices);
-	glDeleteBuffers(1, &VboTexcoords);
-	glDeleteBuffers(1, &VboNormals);
-	glDeleteVertexArrays(1, &VaoId);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	mesh.destroy();
 
 	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
 }
@@ -270,7 +258,7 @@ int frameRotationY;
 
 void drawScene()
 {
-	glBindVertexArray(VaoId);
+	/*glBindVertexArray(VaoId);*/
 	glUseProgram(ProgramId);
 
 	qtrn qtX = fromAngleAxis(frameRotationX, Vec4{ 1,0,0,1 });
@@ -282,10 +270,12 @@ void drawScene()
 	Mat4 model = q.toMatrix();
 	glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, model.convert_opengl());
 	
-	glDrawArrays(GL_TRIANGLES, 0, 24);
-
+	//glDrawArrays(GL_TRIANGLES, 0, 24);
+	
+	mesh.draw();
+	
 	glUseProgram(0);
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 
 	checkOpenGLError("ERROR: Could not draw scene.");
 }
@@ -293,7 +283,7 @@ void drawScene()
 void cleanup()
 {
 	destroyShaderProgram();
-	destroyBufferObjects();
+	destroyMeshes();
 }
 
 void display()
@@ -467,15 +457,26 @@ void setupGLUT(int argc, char* argv[])
 	}
 }
 
+void createMeshes()
+{
+	mesh = Mesh("meshes/custom.obj");
+}
+
+void createScene() {
+
+}
+
 void init(int argc, char* argv[])
 {
 	setupGLUT(argc, argv);
 	setupGLEW();
 	setupOpenGL();
 	//mesh = Mesh("meshes/cube.obj");
-	mesh = Mesh("meshes/triangle.obj");
+	createMeshes();
+	checkOpenGLError("ERROR: Could not create meshes (VAOs and VBOs).");
 	createShaderProgram();
-	createBufferObjects();
+	//createBufferObjects();
+	createScene();
 	setupCallbacks();
 }
 

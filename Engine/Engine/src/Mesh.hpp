@@ -21,6 +21,10 @@ typedef struct {
 
 class Mesh {
 public:
+	const static GLuint VERTICES = 0;
+	const static GLuint TEXCOORDS = 1;
+	const static GLuint NORMALS = 2;
+
 	std::vector<Vertex> Vertices;
 	std::vector<Texcoord> Texcoords;
 	std::vector<Normal> Normals;
@@ -29,7 +33,15 @@ public:
 	Mesh();
 	Mesh(std::string filepath);
 
+	void Mesh::draw();
+	void destroy();
+
 private:
+	GLuint vao_id;
+	GLuint vbo_vertices_id;
+	GLuint vbo_normals_id;
+	GLuint vbo_texcoords_id;
+
 	std::vector<Vertex> vertexData;
 	std::vector<Texcoord> texcoordData;
 	std::vector<Normal> normalData;
@@ -42,5 +54,6 @@ private:
 	void parseLine(std::stringstream& sin);
 	void processMeshData();
 	void freeMeshData();
+	void Mesh::createBufferObjects();
 };
 
