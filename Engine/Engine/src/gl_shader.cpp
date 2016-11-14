@@ -88,6 +88,11 @@ void BindAttributeLocation(GLint pId, GLubyte idx, char* name) {
 GLint GetUniformLocation(GLint pId, char* name) {
 	return glGetUniformLocation(pId, name);
 }
+//TODO
+void addUniform(Shader& shader, string name) {
+	GLint location = GetUniformLocation(shader.ProgramId, "Matrix");
+	shader.uniforms[name] = location;
+}
 
 void DestroyShader(Shader shader) {
 	glDetachShader(shader.ProgramId, shader.VertexShaderId);

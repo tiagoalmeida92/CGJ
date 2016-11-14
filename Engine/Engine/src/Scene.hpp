@@ -20,9 +20,9 @@ public:
 
 private:
 	vector<SceneNode*> children;
-	Mat4 model_matrix;
-	Mesh* mesh_;
-	Shader* shader_;
+	Mat4 model_matrix = identity4();
+	Mesh* mesh_ = nullptr;
+	Shader* shader_ = nullptr;
 };
 
 class SceneGraph {
@@ -30,6 +30,7 @@ public:
 	SceneGraph();
 
 	void setCamera(Camera* camera);
+	Camera * getCamera();
 	SceneNode* getRoot();
 	SceneNode* createNode();
 	void draw();

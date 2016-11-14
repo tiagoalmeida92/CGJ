@@ -12,5 +12,5 @@ uniform mat4 Camera;
 void main(void)
 {
 		gl_Position = Camera * Matrix * vec4(in_Position.x, in_Position.y, in_Position.z, 1.0);
-		ex_Normal = inNormal;
+		ex_Normal = in_Position;
 }

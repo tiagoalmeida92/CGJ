@@ -22,15 +22,17 @@ void SceneNode::setShaderProgram(Shader* shader) {
 }
 
 void SceneNode::draw() {
+
+	if (mesh_ && shader_) {
+		glUniformMatrix4fv(shader_->uniforms["Matrix"], 1, GL_FALSE, (model_matrix).convert_opengl());
+		mesh_->draw();
+	}
 	for (size_t i = 0; i < children.size(); i++)
 	{
+		if (!children[i]->shader_) {
+			children[i]->shader_ = shader_;
+		}
 		children[i]->draw();
-	}
-	if (mesh_) {
-		
-		//glUniformMatrix4fv(, 1, GL_FALSE, identity4().convert_opengl());
-
-		//glDrawArrays(GL_TRIANGLES, 0, 24);
 	}
 }
 
@@ -41,6 +43,10 @@ SceneGraph::SceneGraph() {
 
 void SceneGraph::setCamera(Camera* camera) {
 	camera_ = camera;
+}
+
+Camera * SceneGraph::getCamera() {
+	return camera_;
 }
 
 SceneNode* SceneGraph::getRoot() {

@@ -36,6 +36,7 @@
 #include "GLGameObject.hpp"
 #include "qtrn.hpp"
 #include "Mesh.hpp"
+#include "Scene.hpp"
 
 #define CAPTION "Hello Modern 3D World"
 
@@ -43,14 +44,17 @@ int WinX = 640, WinY = 480;
 int WindowHandle = 0;
 unsigned int FrameCount = 0;
 
-Mesh mesh;
+Mesh meshTriangle;
+Mesh meshCube;
+Mesh meshParallelogram;
+
+SceneGraph scenegraph;
 
 
 GLuint VaoId;
 GLuint VboVertices, VboTexcoords, VboNormals;
 
 GLuint VertexShaderId, FragmentShaderId, ProgramId;
-GLint Matrix_UId;
 GLint Camera_UId;
 
 Shader shader;
@@ -109,6 +113,34 @@ void checkOpenGLError(std::string error)
 	}
 }
 
+void createMeshes()
+{
+	meshTriangle = Mesh("meshes/triangle.obj");
+	meshCube = Mesh("meshes/cube.obj");
+	meshParallelogram = Mesh("meshes/parallelogram.obj");
+}
+
+void createScene() {
+	scenegraph.setCamera(new Camera(Camera_UId));
+	scenegraph.getCamera()->setProjectionMatrix(
+		perspective(30, (float)640 / 480, 1, 10));
+	SceneNode * n = scenegraph.getRoot();
+	n->setShaderProgram(&shader);
+
+	SceneNode * ground = n->createNode();
+	ground->setMesh(&meshCube);
+	ground->setMatrix(
+		translate(Vec3(0.0f, -0.25f, 0.0f)) *
+		scaling4(Vec3(5.0f, 0.25f, 5.0f))
+		);
+
+	SceneNode * cube = ground->createNode();
+	cube->setMesh(&meshCube);
+	
+	
+
+}
+
 void createShaderProgram()
 {
 	shader = CreateProgram("glscripts/triangle.vert", "glscripts/triangle.frag");
@@ -116,12 +148,13 @@ void createShaderProgram()
 		ProgramId = shader.ProgramId;
 
 		BindAttributeLocation(ProgramId, Mesh::VERTICES, "inPosition");
-		if (mesh.TexcoordsLoaded)
+		if (meshTriangle.TexcoordsLoaded)
 			BindAttributeLocation(ProgramId, Mesh::TEXCOORDS, "inTexcoord");
-		if (mesh.NormalsLoaded)
+		if (meshTriangle.NormalsLoaded)
 			BindAttributeLocation(ProgramId, Mesh::NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
-		Matrix_UId = GetUniformLocation(ProgramId, "Matrix");
+		addUniform(shader, "Matrix");
+		//TODO
 		Camera_UId = GetUniformLocation(ProgramId, "Camera");
 	}
 
@@ -136,59 +169,16 @@ void destroyShaderProgram()
 
 	checkOpenGLError("ERROR: Could not destroy shaders.");
 }
-//
-//void createBufferObjects()
-//{
-//	glGenVertexArrays(1, &VaoId);
-//	glBindVertexArray(VaoId);
-//	{
-//		glGenBuffers(1, &VboVertices);
-//		glBindBuffer(GL_ARRAY_BUFFER, VboVertices);
-//		glBufferData(GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof(Vertex), &mesh.Vertices[0], GL_STATIC_DRAW);
-//		glEnableVertexAttribArray(VERTICES);
-//		glVertexAttribPointer(VERTICES, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-//	}
-//	if (mesh.TexcoordsLoaded)
-//	{
-//		glGenBuffers(1, &VboTexcoords);
-//		glBindBuffer(GL_ARRAY_BUFFER, VboTexcoords);
-//		glBufferData(GL_ARRAY_BUFFER, mesh.Texcoords.size() * sizeof(Texcoord), &mesh.Texcoords[0], GL_STATIC_DRAW);
-//		glEnableVertexAttribArray(TEXCOORDS);
-//		glVertexAttribPointer(TEXCOORDS, 2, GL_FLOAT, GL_FALSE, sizeof(Texcoord), 0);
-//	}
-//	if (mesh.NormalsLoaded)
-//	{
-//		glGenBuffers(1, &VboNormals);
-//		glBindBuffer(GL_ARRAY_BUFFER, VboNormals);
-//		glBufferData(GL_ARRAY_BUFFER, mesh.Normals.size() * sizeof(Normal), &mesh.Normals[0], GL_STATIC_DRAW);
-//		glEnableVertexAttribArray(NORMALS);
-//		glVertexAttribPointer(NORMALS, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), 0);
-//	}
-//	glBindVertexArray(0);
-//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-//
-//	checkOpenGLError("ERROR: Could not create VAOs and VBOs.");
-//}
+
 
 void destroyMeshes()
 {
-	mesh.destroy();
+	meshTriangle.destroy();
 
 	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
 }
 
 /////////////////////////////////////////////////////////////////////// SCENE
-
-#define TRIANGLE_INDEX 0
-#define SQUARE_INDEX 24
-#define PARALLELOGRAM_INDEX 60
-
-
-#define INDEX(idx) (void*)idx
-
-Mat4 xViewMatrixRotation = identity4();
-Mat4 yViewMatrixRotation = identity4();
-Mat4 zViewMatrixRotation = identity4();
 
 Vec3 eye = { 0, 0, 8 };
 Vec3 center = { 0, 0, 0 };
@@ -256,6 +246,13 @@ qtrn q;
 int frameRotationX;
 int frameRotationY;
 
+void setViewProjectionMatrix()
+{
+	scenegraph.getCamera()->setViewMatrix(viewMatrix * q.toMatrix());
+
+}
+
+
 void drawScene()
 {
 	/*glBindVertexArray(VaoId);*/
@@ -266,13 +263,23 @@ void drawScene()
 	q = qtX * qtY * q;
 	frameRotationX = frameRotationY = 0;
 
-	glUniformMatrix4fv(Camera_UId, 1, GL_FALSE, (*currentProjection * viewMatrix).convert_opengl());
-	Mat4 model = q.toMatrix();
-	glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, model.convert_opengl());
+	setViewProjectionMatrix();
+	scenegraph.draw();
+
+	//glUniformMatrix4fv(Camera_UId, 1, GL_FALSE, (*currentProjection * viewMatrix * q.toMatrix()).convert_opengl());
+	//Mat4 model = I;
+	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, model.convert_opengl());
 	
 	//glDrawArrays(GL_TRIANGLES, 0, 24);
 	
-	mesh.draw();
+
+	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, translate(Vec3(0.5,0,0)).convert_opengl());
+	//meshTriangle.draw();
+
+	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, (model).convert_opengl());
+	//meshCube.draw();
+	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, translate(Vec3(-1.5, 0, 0)).convert_opengl());
+	//meshParallelogram.draw();
 	
 	glUseProgram(0);
 	//glBindVertexArray(0);
@@ -379,7 +386,7 @@ void onKey(unsigned char key, int x, int y) {
 		eye.y = 0;
 		eye.z = 5;
 		q = qtrn();
-		xViewMatrixRotation = yViewMatrixRotation = zViewMatrixRotation = identity4();
+		//xViewMatrixRotation = yViewMatrixRotation = zViewMatrixRotation = identity4();
 	}
 }
 
@@ -457,14 +464,7 @@ void setupGLUT(int argc, char* argv[])
 	}
 }
 
-void createMeshes()
-{
-	mesh = Mesh("meshes/custom.obj");
-}
 
-void createScene() {
-
-}
 
 void init(int argc, char* argv[])
 {
