@@ -59,6 +59,10 @@ GLint Camera_UId;
 
 Shader shader;
 
+SceneNode * ground;
+
+Vec3 groundTranslation;
+
 
 ///////////////////////////////////MATRICES
 #define PI 3.14159265358979f
@@ -68,7 +72,6 @@ Mat4 I = identity4();
 //Mat4 translateLeft = translate(Vec3(-0.25f, 0.0f, 0));
 //Mat4 translateTopLeft = translate(Vec3(-0.3f, 0.5f, 0));
 //Mat4 big_triangle_1_translate = ;//Mat4 big_triangle_2_translate = translate(Vec3(-0.005f, -0.83f, 0));
-
 //Mat4 big_triangle_2_translate = ;
 //Mat4 translate25Right = translate(Vec3(0.25f, 0.0f, 0));
 //Mat4 translateRight = translate(Vec3(0.5f, 0.0f, 0));
@@ -126,58 +129,61 @@ void createScene() {
 	SceneNode * n = scenegraph.getRoot();
 	n->setShaderProgram(&shader);
 
-	SceneNode * ground = n->createNode();
-	//ground->setMesh(&meshCube);
-	//ground->setMatrix(
-	//	translate(Vec3(0.0f, -0.25f, 0.0f)) *
-	//	scaling4(Vec3(5.0f, 0.25f, 5.0f))
-	//	);
+	ground = n->createNode();
+	ground->setMesh(&meshCube);
+	ground->setMatrix(
+		translate(Vec3(0.0f, -0.9f, 0.0f)) *
+		scaling4(Vec3(5.0f, 0.25f, 5.0f))
+		);
 
-	SceneNode * cube = ground->createNode();
+	SceneNode * cube = n->createNode();
 	cube->setMesh(&meshCube);
 	cube->setMatrix(
 		translate(Vec3(0.0f, -0.25f, 0))
 		);
 	
-	SceneNode * parallelogram = ground->createNode();
+	SceneNode * parallelogram = n->createNode();
 	parallelogram->setMesh(&meshParallelogram);
 	parallelogram->setMatrix(
 		translate(Vec3(0.0f, 0.32f, 0)) *
 		scaling4(Vec3(1.3f, 1.3f, 1.5f))
 		);
 
-	SceneNode * triangleSmall1 = ground->createNode();
+	SceneNode * triangleSmall1 = n->createNode();
 	triangleSmall1->setMesh(&meshTriangle);
 	triangleSmall1->setMatrix(
 		translate(Vec3(-0.2f, 0.83f, 0)) *
 		scaling4(Vec3(0.75f, 0.75f, 0.6f))
 		);
 
-	SceneNode * triangleSmall2 = ground->createNode();
+	SceneNode * triangleSmall2 = n->createNode();
 	triangleSmall2->setMesh(&meshTriangle);
 	triangleSmall2->setMatrix(
 		translate(Vec3(0.05f, 0.83f, 0)) *
 		scaling4(Vec3(0.75f, 0.75f, 0.6f))
 		);
 
-	SceneNode * triangleMedium = ground->createNode();
+	SceneNode * triangleMedium = n->createNode();
 	triangleMedium->setMesh(&meshTriangle);
 	triangleMedium->setMatrix(
 		translate(Vec3(0.5f, 0.0f, 0)) *
+		rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
 		scaling4(Vec3(1.0f, 1.0f, 0.3f))
 		);
 
-	SceneNode * triangleBig1 = ground->createNode();
+	SceneNode * triangleBig1 = n->createNode();
 	triangleBig1->setMesh(&meshTriangle);
 	triangleBig1->setMatrix(
-		translate(Vec3(-0.005f, -0.83f, 0)) *
+		translate(Vec3(0.0f, -0.5f, 0)) *
+		rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
 		scaling4(Vec3(1.3f, 1.3f, 1.5f))
 		);
 
-	SceneNode * triangleBig2 = ground->createNode();
+	SceneNode * triangleBig2 = n->createNode();
 	triangleBig2->setMesh(&meshTriangle);
 	triangleBig2->setMatrix(
 		translate(Vec3(-0.005f, -0.83f, 0)) *
+		rotate4(Vec3(0.0f, 0.0f, 1.0f), 90) *
 		scaling4(Vec3(1.3f, 1.3f, 1.5f))
 		);
 
@@ -307,6 +313,11 @@ void drawScene()
 	frameRotationX = frameRotationY = 0;
 
 	setViewProjectionMatrix();
+	
+	//Translate ground
+	scenegraph.getRoot()->setMatrix(translate(groundTranslation));
+	groundTranslation = Vec3();
+
 	scenegraph.draw();
 
 	//glUniformMatrix4fv(Camera_UId, 1, GL_FALSE, (*currentProjection * viewMatrix * q.toMatrix()).convert_opengl());
@@ -411,25 +422,19 @@ void onMotion(int x, int y) {
 
 }
 
+#define MOVE_OFFSET 0.1f
+
 void onKey(unsigned char key, int x, int y) {
-	if (key == 'p') {
-		if (currentProjection == &orthoMatrix) {
-			currentProjection = &perspectiveMatrix;
-		}
-		else {
-			currentProjection = &orthoMatrix;
-		}
+	if (key == 'w') {
+		groundTranslation.z -= MOVE_OFFSET;
 	}
-	if (key == 'g') {
-		gimbalLock = !gimbalLock;
-		cout << "Gimbal " << gimbalLock << endl;
+	else if (key == 's') {
+		groundTranslation.z += MOVE_OFFSET;
+	}else if (key == 'a') {
+		groundTranslation.x -= MOVE_OFFSET;
 	}
-	else if (key == 'r') {
-		eye.x = 0;
-		eye.y = 0;
-		eye.z = 5;
-		q = qtrn();
-		//xViewMatrixRotation = yViewMatrixRotation = zViewMatrixRotation = identity4();
+	else if (key == 'd') {
+		groundTranslation.x += MOVE_OFFSET;
 	}
 }
 

@@ -32,6 +32,7 @@ void SceneNode::draw() {
 		if (!children[i]->shader_) {
 			children[i]->shader_ = shader_;
 		}
+		children[i]->model_matrix = model_matrix * children[i]->model_matrix;
 		children[i]->draw();
 	}
 }
