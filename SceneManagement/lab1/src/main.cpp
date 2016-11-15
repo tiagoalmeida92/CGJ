@@ -67,23 +67,22 @@ Mat4 I = identity4();
 //Mat4 translateAbitLeft = translate(Vec3(-0.1f, 0.0f, 0));
 //Mat4 translateLeft = translate(Vec3(-0.25f, 0.0f, 0));
 //Mat4 translateTopLeft = translate(Vec3(-0.3f, 0.5f, 0));
-//Mat4 big_triangle_1_translate = translate(Vec3(0.0f, -0.5f, 0));
-//Mat4 big_triangle_2_translate = translate(Vec3(-0.005f, -0.83f, 0));
+//Mat4 big_triangle_1_translate = ;//Mat4 big_triangle_2_translate = translate(Vec3(-0.005f, -0.83f, 0));
+
+//Mat4 big_triangle_2_translate = ;
 //Mat4 translate25Right = translate(Vec3(0.25f, 0.0f, 0));
 //Mat4 translateRight = translate(Vec3(0.5f, 0.0f, 0));
-//Mat4 translateBottom = translate(Vec3(0.0f, -0.5f, 0));
+//Mat4 translateBottom = ;
 //Mat4 translateAlotBottom = translate(Vec3(0.0f, -0.65f, 0));
-//Mat4 smallTriangle1Translate = translate(Vec3(-0.2f, 0.83f, 0));
-//Mat4 smallTriangle2Translate = translate(Vec3(0.05f, 0.83f, 0));
 //Mat4 translateTop = translate(Vec3(0.0f, 0.5f, 0));
 //
-//Mat4 translateMediumTriangle = translate(Vec3(0.5f, 0.0f, 0));
+//Mat4 translateMediumTriangle = ;
 //Mat4 parallelogramTranslate = translate(Vec3(0.0f, 0.32f, 0));
 //Mat4 translate25Bottom = translate(Vec3(0.0f, -0.25f, 0));
 //
 //Mat4 scaleMedium = scaling4(Vec3(1.0f, 1.0f, 0.3f));
 //Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, -1.0f));
-//Mat4 scaleBig = scaling4(Vec3(1.3f, 1.3f, 1.5f));
+//Mat4 scaleBig = ;
 //Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0.6f));
 //
 //Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), 90);
@@ -128,16 +127,59 @@ void createScene() {
 	n->setShaderProgram(&shader);
 
 	SceneNode * ground = n->createNode();
-	ground->setMesh(&meshCube);
-	ground->setMatrix(
-		translate(Vec3(0.0f, -0.25f, 0.0f)) *
-		scaling4(Vec3(5.0f, 0.25f, 5.0f))
-		);
+	//ground->setMesh(&meshCube);
+	//ground->setMatrix(
+	//	translate(Vec3(0.0f, -0.25f, 0.0f)) *
+	//	scaling4(Vec3(5.0f, 0.25f, 5.0f))
+	//	);
 
 	SceneNode * cube = ground->createNode();
 	cube->setMesh(&meshCube);
+	cube->setMatrix(
+		translate(Vec3(0.0f, -0.25f, 0))
+		);
 	
-	
+	SceneNode * parallelogram = ground->createNode();
+	parallelogram->setMesh(&meshParallelogram);
+	parallelogram->setMatrix(
+		translate(Vec3(0.0f, 0.32f, 0)) *
+		scaling4(Vec3(1.3f, 1.3f, 1.5f))
+		);
+
+	SceneNode * triangleSmall1 = ground->createNode();
+	triangleSmall1->setMesh(&meshTriangle);
+	triangleSmall1->setMatrix(
+		translate(Vec3(-0.2f, 0.83f, 0)) *
+		scaling4(Vec3(0.75f, 0.75f, 0.6f))
+		);
+
+	SceneNode * triangleSmall2 = ground->createNode();
+	triangleSmall2->setMesh(&meshTriangle);
+	triangleSmall2->setMatrix(
+		translate(Vec3(0.05f, 0.83f, 0)) *
+		scaling4(Vec3(0.75f, 0.75f, 0.6f))
+		);
+
+	SceneNode * triangleMedium = ground->createNode();
+	triangleMedium->setMesh(&meshTriangle);
+	triangleMedium->setMatrix(
+		translate(Vec3(0.5f, 0.0f, 0)) *
+		scaling4(Vec3(1.0f, 1.0f, 0.3f))
+		);
+
+	SceneNode * triangleBig1 = ground->createNode();
+	triangleBig1->setMesh(&meshTriangle);
+	triangleBig1->setMatrix(
+		translate(Vec3(-0.005f, -0.83f, 0)) *
+		scaling4(Vec3(1.3f, 1.3f, 1.5f))
+		);
+
+	SceneNode * triangleBig2 = ground->createNode();
+	triangleBig2->setMesh(&meshTriangle);
+	triangleBig2->setMatrix(
+		translate(Vec3(-0.005f, -0.83f, 0)) *
+		scaling4(Vec3(1.3f, 1.3f, 1.5f))
+		);
 
 }
 
@@ -174,7 +216,8 @@ void destroyShaderProgram()
 void destroyMeshes()
 {
 	meshTriangle.destroy();
-
+	meshCube.destroy();
+	meshParallelogram.destroy();
 	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
 }
 
