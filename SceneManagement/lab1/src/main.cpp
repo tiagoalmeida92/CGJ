@@ -62,6 +62,9 @@ Shader shader;
 SceneNode * ground;
 
 Vec3 groundTranslation;
+Vec3 cubeStart {0.25f, 0.0f, 0.0f};
+Vec3 cubeAnimationDistance;
+bool animating;
 
 
 ///////////////////////////////////MATRICES
@@ -122,6 +125,8 @@ void createMeshes()
 	meshParallelogram = Mesh("meshes/parallelogram.obj");
 }
 
+SceneNode * cube;
+
 void createScene() {
 	scenegraph.setCamera(new Camera(Camera_UId));
 	scenegraph.getCamera()->setProjectionMatrix(
@@ -129,63 +134,64 @@ void createScene() {
 	SceneNode * n = scenegraph.getRoot();
 	n->setShaderProgram(&shader);
 
-	ground = n->createNode();
-	ground->setMesh(&meshCube);
-	ground->setMatrix(
-		translate(Vec3(0.0f, -0.9f, 0.0f)) *
-		scaling4(Vec3(5.0f, 0.25f, 5.0f))
-		);
+	//ground = n->createNode();
+	//ground->setMesh(&meshCube);
+	//ground->setMatrix(
+	//	translate(Vec3(0.0f, -0.9f, 0.0f)) *
+	//	scaling4(Vec3(5.0f, 0.25f, 5.0f))
+	//	);
 
-	SceneNode * cube = n->createNode();
+	cube = n->createNode();
 	cube->setMesh(&meshCube);
 	cube->setMatrix(
-		translate(Vec3(0.0f, -0.25f, 0))
+		translate(cubeStart) *
+		rotate4(AXIS_Y, 45)
 		);
 	
-	SceneNode * parallelogram = n->createNode();
-	parallelogram->setMesh(&meshParallelogram);
-	parallelogram->setMatrix(
-		translate(Vec3(0.0f, 0.32f, 0)) *
-		scaling4(Vec3(1.3f, 1.3f, 1.5f))
-		);
+	//SceneNode * parallelogram = n->createNode();
+	//parallelogram->setMesh(&meshParallelogram);
+	//parallelogram->setMatrix(
+	//	translate(Vec3(0.0f, 0.32f, 0)) *
+	//	scaling4(Vec3(1.3f, 1.3f, 1.5f))
+	//	);
 
-	SceneNode * triangleSmall1 = n->createNode();
-	triangleSmall1->setMesh(&meshTriangle);
-	triangleSmall1->setMatrix(
-		translate(Vec3(-0.2f, 0.83f, 0)) *
-		scaling4(Vec3(0.75f, 0.75f, 0.6f))
-		);
+	//SceneNode * triangleSmall1 = n->createNode();
+	//triangleSmall1->setMesh(&meshTriangle);
+	//triangleSmall1->setMatrix(
+	//	translate(Vec3(-0.2f, 0.83f, 0)) *
+	//	scaling4(Vec3(0.75f, 0.75f, 0.6f))
+	//	);
 
-	SceneNode * triangleSmall2 = n->createNode();
-	triangleSmall2->setMesh(&meshTriangle);
-	triangleSmall2->setMatrix(
-		translate(Vec3(0.05f, 0.83f, 0)) *
-		scaling4(Vec3(0.75f, 0.75f, 0.6f))
-		);
+	//SceneNode * triangleSmall2 = n->createNode();
+	//triangleSmall2->setMesh(&meshTriangle);
+	//triangleSmall2->setMatrix(
+	//	translate(Vec3(0.05f, 0.83f, 0)) *
+	//	scaling4(Vec3(0.75f, 0.75f, 0.6f))
+	//	);
 
-	SceneNode * triangleMedium = n->createNode();
-	triangleMedium->setMesh(&meshTriangle);
-	triangleMedium->setMatrix(
-		translate(Vec3(0.5f, 0.0f, 0)) *
-		rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
-		scaling4(Vec3(1.0f, 1.0f, 0.3f))
-		);
+	//SceneNode * triangleMedium = n->createNode();
+	//triangleMedium->setMesh(&meshTriangle);
+	//triangleMedium->setMatrix(
+	//	translate(Vec3(0.5f, 0.0f, 0)) *
+	//	rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
+	//	scaling4(Vec3(1.0f, 1.0f, 0.3f))
+	//	);
 
-	SceneNode * triangleBig1 = n->createNode();
-	triangleBig1->setMesh(&meshTriangle);
-	triangleBig1->setMatrix(
-		translate(Vec3(0.0f, -0.5f, 0)) *
-		rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
-		scaling4(Vec3(1.3f, 1.3f, 1.5f))
-		);
+	//SceneNode * triangleBig1 = n->createNode();
+	//triangleBig1->setMesh(&meshTriangle);
+	//triangleBig1->setMatrix(
+	//	translate(Vec3(0.0f, -0.5f, 0)) *
+	//	rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
+	//	scaling4(Vec3(1.3f, 1.3f, 1.5f))
+	//	);
 
-	SceneNode * triangleBig2 = n->createNode();
-	triangleBig2->setMesh(&meshTriangle);
-	triangleBig2->setMatrix(
-		translate(Vec3(-0.005f, -0.83f, 0)) *
-		rotate4(Vec3(0.0f, 0.0f, 1.0f), 90) *
-		scaling4(Vec3(1.3f, 1.3f, 1.5f))
-		);
+	//SceneNode * triangleBig2 = n->createNode();
+	//triangleBig2->setMesh(&meshTriangle);
+	//triangleBig2->setMatrix(
+	//	translate(Vec3(-0.005f, -0.83f, 0)) *
+	//	rotate4(Vec3(0.0f, 0.0f, 1.0f), 90) *
+	//	scaling4(Vec3(1.3f, 1.3f, 1.5f))
+	//	);
 
 }
 
@@ -295,6 +301,11 @@ qtrn q;
 int frameRotationX;
 int frameRotationY;
 
+void updateAnimatedValues() {
+	cubeAnimationDistance.x += 0.001;
+}
+
+
 void setViewProjectionMatrix()
 {
 	scenegraph.getCamera()->setViewMatrix(viewMatrix * q.toMatrix());
@@ -304,6 +315,9 @@ void setViewProjectionMatrix()
 
 void drawScene()
 {
+	if (animating) {
+		updateAnimatedValues();
+	}
 	/*glBindVertexArray(VaoId);*/
 	glUseProgram(ProgramId);
 
@@ -315,28 +329,21 @@ void drawScene()
 	setViewProjectionMatrix();
 	
 	//Translate ground
-	scenegraph.getRoot()->setMatrix(translate(groundTranslation));
-	groundTranslation = Vec3();
+	scenegraph.getRoot()->setMatrix(
+		translate(groundTranslation)
+		);
 
+	//cube->setMatrix(
+	//	translate(cubeAnimationDistance)
+	//	);
+
+	
 	scenegraph.draw();
 
-	//glUniformMatrix4fv(Camera_UId, 1, GL_FALSE, (*currentProjection * viewMatrix * q.toMatrix()).convert_opengl());
-	//Mat4 model = I;
-	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, model.convert_opengl());
-	
-	//glDrawArrays(GL_TRIANGLES, 0, 24);
-	
-
-	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, translate(Vec3(0.5,0,0)).convert_opengl());
-	//meshTriangle.draw();
-
-	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, (model).convert_opengl());
-	//meshCube.draw();
-	//glUniformMatrix4fv(Matrix_UId, 1, GL_FALSE, translate(Vec3(-1.5, 0, 0)).convert_opengl());
-	//meshParallelogram.draw();
-	
 	glUseProgram(0);
-	//glBindVertexArray(0);
+
+	//Clean animatedValues
+	groundTranslation = Vec3();
 
 	checkOpenGLError("ERROR: Could not draw scene.");
 }
@@ -435,6 +442,9 @@ void onKey(unsigned char key, int x, int y) {
 	}
 	else if (key == 'd') {
 		groundTranslation.x += MOVE_OFFSET;
+	}
+	else if (key == 'f') {
+		animating = true;
 	}
 }
 
