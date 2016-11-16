@@ -71,8 +71,11 @@ struct Vec3
 	friend ostream& operator<< (ostream &out, const Vec3 &v);
 	friend istream& operator>> (istream &out, Vec3 &v);
 
+	
 
 };
+
+static Vec3 AXIS_Y = Vec3{ 0,1,0 };
 
 struct Vec4
 {
