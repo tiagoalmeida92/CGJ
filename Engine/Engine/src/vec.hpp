@@ -70,12 +70,15 @@ struct Vec3
 
 	friend ostream& operator<< (ostream &out, const Vec3 &v);
 	friend istream& operator>> (istream &out, Vec3 &v);
-
+	friend Vec3 lerp(Vec3& a, Vec3& b, float n);
 	
 
 };
 
+static Vec3 AXIS_X = Vec3{ 1,0,0 };
 static Vec3 AXIS_Y = Vec3{ 0,1,0 };
+static Vec3 AXIS_Z = Vec3{ 0,0,1 };
+
 
 struct Vec4
 {

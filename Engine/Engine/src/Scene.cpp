@@ -21,19 +21,18 @@ void SceneNode::setShaderProgram(Shader* shader) {
 	shader_ = shader;
 }
 
-void SceneNode::draw() {
+void SceneNode::draw(Mat4& parents_matrix) {
 
 	if (mesh_ && shader_) {
-		glUniformMatrix4fv(shader_->uniforms["Matrix"], 1, GL_FALSE, (model_matrix).convert_opengl());
-		mesh_->draw();
+		glUniformMatrix4fv(shader_->uniforms["Matrix"], 1, GL_FALSE, (parents_matrix * model_matrix).convert_opengl());
+		mesh_->draw();//TODO por a usar o shader certo
 	}
 	for (size_t i = 0; i < children.size(); i++)
 	{
 		if (!children[i]->shader_) {
 			children[i]->shader_ = shader_;
 		}
-		children[i]->model_matrix = model_matrix * children[i]->model_matrix;
-		children[i]->draw();
+		children[i]->draw(parents_matrix * model_matrix);
 	}
 }
 
@@ -60,5 +59,5 @@ SceneNode* SceneGraph::createNode() {
 
 
 void SceneGraph::draw() {
-	root.draw();
+	root.draw(identity4());
 }

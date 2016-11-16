@@ -39,6 +39,7 @@
 #include "Scene.hpp"
 
 #define CAPTION "Hello Modern 3D World"
+#define ANIMATION_TIME_MS 1000
 
 int WinX = 640, WinY = 480;
 int WindowHandle = 0;
@@ -62,10 +63,13 @@ Shader shader;
 SceneNode * ground;
 
 Vec3 groundTranslation;
-Vec3 cubeStart {0.25f, 0.0f, 0.0f};
 Vec3 cubeAnimationDistance;
-bool animating;
 
+bool animating, reverse_anim = true;
+
+
+
+int animation_ms;
 
 ///////////////////////////////////MATRICES
 #define PI 3.14159265358979f
@@ -94,6 +98,13 @@ Mat4 I = identity4();
 //Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), 90);
 //Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), 270);
 //Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), 180);
+
+
+Vec3 cube_start(0.25f, 0.0f, 0.0f);
+Vec3 cube_end(0.0f, 0.25f, 0);
+Vec3 paral_start(-0.25f, 0.0f, 0.5f);
+Vec3 sm_triangle1_start(-0.2f, 0.83f, 0);
+Vec3 sm_triangle1_end(-0.2f, 0.83f, 0);
 
 /////////////////////////////////////////////////////////////////////// ERRORS
 
@@ -125,7 +136,7 @@ void createMeshes()
 	meshParallelogram = Mesh("meshes/parallelogram.obj");
 }
 
-SceneNode * cube;
+SceneNode * cubeT;
 
 void createScene() {
 	scenegraph.setCamera(new Camera(Camera_UId));
@@ -134,31 +145,32 @@ void createScene() {
 	SceneNode * n = scenegraph.getRoot();
 	n->setShaderProgram(&shader);
 
-	//ground = n->createNode();
-	//ground->setMesh(&meshCube);
-	//ground->setMatrix(
-	//	translate(Vec3(0.0f, -0.9f, 0.0f)) *
-	//	scaling4(Vec3(5.0f, 0.25f, 5.0f))
-	//	);
+	ground = n->createNode();
+	ground->setMesh(&meshCube);
+	ground->setMatrix(
+		translate(Vec3(0.0f, 0.0f, -0.25f)) *
+		scaling4(Vec3(3.0f, 3.0f, 0.25f))
+		);
 
-	cube = n->createNode();
+	cubeT = n->createNode();
+	SceneNode* cube = cubeT->createNode();
 	cube->setMesh(&meshCube);
 	cube->setMatrix(
-		translate(cubeStart) *
-		rotate4(AXIS_Y, 45)
+		translate(cube_start)
 		);
 	
 	//SceneNode * parallelogram = n->createNode();
 	//parallelogram->setMesh(&meshParallelogram);
 	//parallelogram->setMatrix(
-	//	translate(Vec3(0.0f, 0.32f, 0)) *
-	//	scaling4(Vec3(1.3f, 1.3f, 1.5f))
+	//	translate(paral_start) *
+	//	rotate4(AXIS_X, 270) *
+	//	scaling4(Vec3(1.0f, 1.0f, 1.0f)) 
 	//	);
 
 	//SceneNode * triangleSmall1 = n->createNode();
 	//triangleSmall1->setMesh(&meshTriangle);
 	//triangleSmall1->setMatrix(
-	//	translate(Vec3(-0.2f, 0.83f, 0)) *
+	//	translate(sm_triangle1_start) *
 	//	scaling4(Vec3(0.75f, 0.75f, 0.6f))
 	//	);
 
@@ -300,9 +312,25 @@ qtrn q;
 
 int frameRotationX;
 int frameRotationY;
+int last_time;
 
-void updateAnimatedValues() {
-	cubeAnimationDistance.x += 0.001;
+void updateAnimatedValues(int delta) {
+	animation_ms += delta;
+
+	Vec3 cube_position;
+	if (!reverse_anim) {
+		cube_position = lerp(cube_start, cube_end, (float)animation_ms / ANIMATION_TIME_MS);
+	}
+	else {
+		cube_position = lerp(cube_end, cube_start, (float)animation_ms / ANIMATION_TIME_MS);
+	}
+	cout << cube_position << endl;
+	cubeT->setMatrix(
+		translate(cube_position));
+	if (animation_ms >= ANIMATION_TIME_MS) {
+		animating = false;
+		animation_ms = 0;
+	}
 }
 
 
@@ -315,8 +343,11 @@ void setViewProjectionMatrix()
 
 void drawScene()
 {
+	int current_time = glutGet(GLUT_ELAPSED_TIME);
+	int delta = current_time - last_time;
+	last_time = current_time;
 	if (animating) {
-		updateAnimatedValues();
+		updateAnimatedValues(delta);
 	}
 	/*glBindVertexArray(VaoId);*/
 	glUseProgram(ProgramId);
@@ -332,18 +363,10 @@ void drawScene()
 	scenegraph.getRoot()->setMatrix(
 		translate(groundTranslation)
 		);
-
-	//cube->setMatrix(
-	//	translate(cubeAnimationDistance)
-	//	);
-
 	
 	scenegraph.draw();
 
 	glUseProgram(0);
-
-	//Clean animatedValues
-	groundTranslation = Vec3();
 
 	checkOpenGLError("ERROR: Could not draw scene.");
 }
@@ -433,10 +456,10 @@ void onMotion(int x, int y) {
 
 void onKey(unsigned char key, int x, int y) {
 	if (key == 'w') {
-		groundTranslation.z -= MOVE_OFFSET;
+		groundTranslation.y += MOVE_OFFSET;
 	}
 	else if (key == 's') {
-		groundTranslation.z += MOVE_OFFSET;
+		groundTranslation.y -= MOVE_OFFSET;
 	}else if (key == 'a') {
 		groundTranslation.x -= MOVE_OFFSET;
 	}
@@ -445,6 +468,7 @@ void onKey(unsigned char key, int x, int y) {
 	}
 	else if (key == 'f') {
 		animating = true;
+		reverse_anim = !reverse_anim;
 	}
 }
 

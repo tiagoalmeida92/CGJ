@@ -219,6 +219,11 @@ istream& operator>> (istream &in, Vec3 &v) {
 	return in;
 }
 
+Vec3 lerp(Vec3& a, Vec3& b, float n) {
+	n = n > 1 ? 1 : n;
+	return a + (b - a) * n;
+}
+
 //VEC 4
 
 Vec4 Vec4::normalize()
