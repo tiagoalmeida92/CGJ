@@ -24,8 +24,10 @@ void SceneNode::setShaderProgram(Shader* shader) {
 void SceneNode::draw(Mat4& parents_matrix) {
 
 	if (mesh_ && shader_) {
+		glUseProgram(shader_->ProgramId);
 		glUniformMatrix4fv(shader_->uniforms["Matrix"], 1, GL_FALSE, (parents_matrix * model_matrix).convert_opengl());
-		mesh_->draw();//TODO por a usar o shader certo
+		mesh_->draw();
+		glUseProgram(0);
 	}
 	for (size_t i = 0; i < children.size(); i++)
 	{

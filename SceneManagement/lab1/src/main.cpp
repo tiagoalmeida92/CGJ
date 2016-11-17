@@ -40,7 +40,6 @@
 #include "Animation.hpp"
 
 #define CAPTION "Hello Modern 3D World"
-#define ANIMATION_TIME_MS 1000
 
 int WinX = 640, WinY = 480;
 int WindowHandle = 0;
@@ -92,13 +91,12 @@ Vec3 l_triangle2_start(0.0f, 0.0f, 0);
 Vec3 l_triangle2_end(-0.75f, -0.75f, 0);
 
 
+#define ANIMATION_TIME_MS 2500
 
 bool animating, reverse_anim = true;
 vector<Animation> animations;
 int animation_ms;
 Vec3 groundTranslation;
-
-
 
 ////////////////////////////////////////// ERRORS
 
@@ -238,7 +236,7 @@ void createShaderProgram()
 }
 
 
-void updateAnimatedValues(int delta) {
+void animateScene(int delta) {
 	animation_ms += delta;
 	for (size_t i = 0; i < animations.size(); i++)
 	{
@@ -267,19 +265,13 @@ void drawScene()
 {
 	int delta = calculateDelta();
 	if (animating) {
-		updateAnimatedValues(delta);
+		animateScene(delta);
 	}
 
-	/*glBindVertexArray(VaoId);*/
 	glUseProgram(ProgramId);
 
 	setViewProjectionMatrix();
-	
-	//Translate ground
-	scenegraph.getRoot()->setMatrix(
-		translate(groundTranslation)
-		);
-	
+
 	scenegraph.draw();
 
 	glUseProgram(0);
@@ -408,6 +400,7 @@ void onKey(unsigned char key, int x, int y) {
 		animating = true;
 		reverse_anim = !reverse_anim;
 	}
+	scenegraph.getRoot()->setMatrix(translate(groundTranslation));
 }
 
 /////////////////////////////////////////////////////////////////////// SETUP
