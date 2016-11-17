@@ -81,16 +81,16 @@ Shader CreateProgram(char* vertexShaderFile, char* fragmentShaderFile) {
 	return shader;
 }
 
-void BindAttributeLocation(GLint pId, GLubyte idx, char* name) {
+void BindAttributeLocation(GLint pId, GLubyte idx, const char* name) {
 	glBindAttribLocation(pId, idx, name);
 }
 
-GLint GetUniformLocation(GLint pId, char* name) {
+GLint GetUniformLocation(GLint pId, const char* name) {
 	return glGetUniformLocation(pId, name);
 }
-//TODO
+
 void addUniform(Shader& shader, string name) {
-	GLint location = GetUniformLocation(shader.ProgramId, "Matrix");
+	GLint location = GetUniformLocation(shader.ProgramId, name.c_str());
 	shader.uniforms[name] = location;
 }
 

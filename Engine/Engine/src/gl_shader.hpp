@@ -24,11 +24,10 @@ typedef struct {
 
 Shader CreateProgram(char*, char*);
 
-void BindAttributeLocation(GLint, GLubyte, char*);
+void BindAttributeLocation(GLint, GLubyte, const char*);
 
-GLint GetUniformLocation(GLint, char*);
+GLint GetUniformLocation(GLint, const char*);
 
 void DestroyShader(Shader);
 
-//TODO
 void addUniform(Shader& shader, string name);
