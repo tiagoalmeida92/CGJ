@@ -230,7 +230,6 @@ void createShaderProgram()
 			BindAttributeLocation(ProgramId, Mesh::NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
 		addUniform(shader, "Matrix");
-		//TODO
 		Camera_UId = GetUniformLocation(ProgramId, "Camera");
 	}
 }
