@@ -68,8 +68,6 @@ Vec3 cubeAnimationDistance;
 
 bool animating, reverse_anim = true;
 vector<Animation> animations;
-
-
 int animation_ms;
 
 ///////////////////////////////////MATRICES
@@ -101,11 +99,6 @@ Mat4 I = identity4();
 //Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), 180);
 
 
-Vec3 cube_start(0.25f, 0.0f, 0.0f);
-Vec3 cube_end(0.0f, 0.25f, 0);
-Vec3 paral_start(-0.25f, 0.0f, 0.5f);
-Vec3 sm_triangle1_start(-0.2f, 0.83f, 0);
-Vec3 sm_triangle1_end(-0.2f, 0.83f, 0);
 
 /////////////////////////////////////////////////////////////////////// ERRORS
 
@@ -137,7 +130,31 @@ void createMeshes()
 	meshParallelogram = Mesh("meshes/parallelogram.obj");
 }
 
+SceneNode* figure;
 SceneNode * cubeT;
+SceneNode * parallelogramT;
+SceneNode * big_triangles_t;
+SceneNode * triangle_big_1T;
+SceneNode * triangle_big_2T;
+SceneNode * triangle_medT;
+SceneNode * triangle_small_1T;
+SceneNode * triangle_small_2T;
+
+Vec3 cube_start(0.37f, 0.0f, 0.0f);
+Vec3 cube_end(0.58f, 0.02f, 0);
+Vec3 paral_start(-0.2f, -0.55f, 0.0f);
+Vec3 paral_end(-1.0f, -0.250f, 0.0f);
+Vec3 sm_triangle1_start(0.38, 0.38f, 0);
+Vec3 sm_triangle1_end(-1.25f, 0.28f, 0);
+Vec3 sm_triangle2_start(0.0f, 0.0f, 0);
+Vec3 sm_triangle2_end(0.30f, -0.22f, 0);
+Vec3 m_triangle_start(0.750f, -0.75f, 0);
+Vec3 m_triangle_end(-0.2f, 0.85f, 0);
+Vec3 l_triangle1_start(0.0f, 0.0f, 0);
+Vec3 l_triangle1_end(0.30f, 0.3f, 0);
+Vec3 l_triangle2_start(0.0f, 0.0f, 0);
+Vec3 l_triangle2_end(-0.75f, -0.75f, 0);
+
 
 void createScene() {
 	scenegraph.setCamera(new Camera(Camera_UId));
@@ -150,60 +167,74 @@ void createScene() {
 	ground->setMesh(&meshCube);
 	ground->setMatrix(
 		translate(Vec3(0.0f, 0.0f, -0.25f)) *
-		scaling4(Vec3(3.0f, 3.0f, 0.25f))
+		scaling4(Vec3(7.0f, 7.0f, 0.25f))
 		);
 
-	cubeT = n->createNode();
-	cubeT->setMatrix(
-		translate(cube_start));
+	figure = n->createNode();
+	cubeT = figure->createNode();
+	cubeT->setMatrix(translate(cube_start));
 	SceneNode* cube = cubeT->createNode();
 	cube->setMesh(&meshCube);
+	cube->setMatrix(rotate4(AXIS_Z, 45) 
+		* scaling4(Vec3(1.1f,1.1f,1.1f)));
 	
-	//SceneNode * parallelogram = n->createNode();
-	//parallelogram->setMesh(&meshParallelogram);
-	//parallelogram->setMatrix(
-	//	translate(paral_start) *
-	//	rotate4(AXIS_X, 270) *
-	//	scaling4(Vec3(1.0f, 1.0f, 1.0f)) 
-	//	);
+	parallelogramT = figure->createNode();
+	parallelogramT->setMatrix(translate(paral_start));
+	
+	SceneNode * parallelogram = parallelogramT->createNode();
+	parallelogram->setMesh(&meshParallelogram);
+	parallelogram->setMatrix(
+		scaling4(Vec3(1.0f, 0.75f, 1.0f)) 
+		);
 
-	//SceneNode * triangleSmall1 = n->createNode();
-	//triangleSmall1->setMesh(&meshTriangle);
-	//triangleSmall1->setMatrix(
-	//	translate(sm_triangle1_start) *
-	//	scaling4(Vec3(0.75f, 0.75f, 0.6f))
-	//	);
+	triangle_big_1T = figure->createNode();
+	SceneNode * triangleBig1 = triangle_big_1T->createNode();
+	triangle_big_1T->setMatrix(translate(l_triangle1_start));
+	triangleBig1->setMesh(&meshTriangle);
+	triangleBig1->setMatrix(
+		rotate4(AXIS_Z, 45) *
+		scaling4(Vec3(4.2f, 4.2f, 1.0f))
+		);
 
-	//SceneNode * triangleSmall2 = n->createNode();
-	//triangleSmall2->setMesh(&meshTriangle);
-	//triangleSmall2->setMatrix(
-	//	translate(Vec3(0.05f, 0.83f, 0)) *
-	//	scaling4(Vec3(0.75f, 0.75f, 0.6f))
-	//	);
 
-	//SceneNode * triangleMedium = n->createNode();
-	//triangleMedium->setMesh(&meshTriangle);
-	//triangleMedium->setMatrix(
-	//	translate(Vec3(0.5f, 0.0f, 0)) *
-	//	rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
-	//	scaling4(Vec3(1.0f, 1.0f, 0.3f))
-	//	);
+	triangle_big_2T = figure->createNode();
+	triangle_big_2T->setMatrix(translate(l_triangle2_start));
+	SceneNode * triangleBig2 = triangle_big_2T->createNode();
+	triangleBig2->setMesh(&meshTriangle);
+	triangleBig2->setMatrix(
+		rotate4(AXIS_Z, 135) *
+		scaling4(Vec3(4.2f, 4.2f, 1.0f))
+		);
 
-	//SceneNode * triangleBig1 = n->createNode();
-	//triangleBig1->setMesh(&meshTriangle);
-	//triangleBig1->setMatrix(
-	//	translate(Vec3(0.0f, -0.5f, 0)) *
-	//	rotate4(Vec3(0.0f, 0.0f, 1.0f), 270) *
-	//	scaling4(Vec3(1.3f, 1.3f, 1.5f))
-	//	);
+	triangle_medT = figure->createNode();
+	triangle_medT->setMatrix(translate(m_triangle_start));
+	SceneNode * triangleMedium = triangle_medT->createNode();
+	triangleMedium->setMesh(&meshTriangle);
+	triangleMedium->setMatrix(
+		rotate4(AXIS_Z, 90) *
+		scaling4(Vec3(3.1f, 3.1f, 1.0f))
+		);
 
-	//SceneNode * triangleBig2 = n->createNode();
-	//triangleBig2->setMesh(&meshTriangle);
-	//triangleBig2->setMatrix(
-	//	translate(Vec3(-0.005f, -0.83f, 0)) *
-	//	rotate4(Vec3(0.0f, 0.0f, 1.0f), 90) *
-	//	scaling4(Vec3(1.3f, 1.3f, 1.5f))
-	//	);
+	triangle_small_1T = figure->createNode();
+	triangle_small_1T->setMatrix(translate(sm_triangle1_start));
+	SceneNode * triangleSmall1 = triangle_small_1T->createNode();
+	triangleSmall1->setMesh(&meshTriangle);
+	triangleSmall1->setMatrix(
+		rotate4(AXIS_Z, -45) *
+		scaling4(Vec3(2.1f, 2.1f, 1.0f))
+		);
+
+	triangle_small_2T = figure->createNode();
+	triangle_small_2T->setMatrix(translate(sm_triangle2_start));
+	SceneNode * triangleSmall2 = triangle_small_2T->createNode();
+	triangleSmall2->setMesh(&meshTriangle);
+	triangleSmall2->setMatrix(
+		rotate4(AXIS_Z, 225) *
+		scaling4(Vec3(2.1f, 2.1f, 1.0f))
+		);
+
+
+
 
 }
 
@@ -365,8 +396,17 @@ void drawScene()
 	checkOpenGLError("ERROR: Could not draw scene.");
 }
 
+//Animations
+
 void createAnimations() {
-	animations.push_back(Animation(cubeT, cube_start, cube_end));
+	animations.push_back(Animation(cubeT, cube_start, cube_end, 0, 45));
+	animations.push_back(Animation(parallelogramT, paral_start, paral_end, 0, 45, 0, 180));
+	animations.push_back(Animation(triangle_big_1T, l_triangle1_start, l_triangle1_end, 0, 135));
+	animations.push_back(Animation(triangle_big_2T, l_triangle2_start, l_triangle2_end, 0, -135));
+	animations.push_back(Animation(triangle_small_1T, sm_triangle1_start, sm_triangle1_end, 0, 225));
+	animations.push_back(Animation(triangle_small_2T, sm_triangle2_start, sm_triangle2_end, 0, 45));
+	animations.push_back(Animation(triangle_medT, m_triangle_start, m_triangle_end, 0, 135));
+	//animations.push_back(Animation(figure, Vec3(), Vec3(0, 0,0.5f), AXIS_X, 0, 90));
 }
 
 void cleanup()
@@ -412,7 +452,7 @@ int clicked = -1;
 int mouseX;
 int mouseY;
 
-#define EYE_OFFSET 0.1f
+#define EYE_OFFSET 0.3f
 
 //button 0 LEFT
 //button 1 MIDDLE
@@ -430,6 +470,7 @@ void onMouse(int button, int state, int x, int y)
 	else if (button == 4) {
 		eye.z += EYE_OFFSET;
 	}
+	viewMatrix = lookAt(eye, center, up);
 }
 
 void onMotion(int x, int y) {
