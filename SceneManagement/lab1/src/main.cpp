@@ -293,7 +293,7 @@ void createAnimations() {
 
 void destroyShaderProgram()
 {
-	glUseProgram(0);
+	
 	DestroyShader(shader);
 
 	checkOpenGLError("ERROR: Could not destroy shaders.");

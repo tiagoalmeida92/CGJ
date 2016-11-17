@@ -95,6 +95,7 @@ void addUniform(Shader& shader, string name) {
 }
 
 void DestroyShader(Shader shader) {
+	glUseProgram(0);
 	glDetachShader(shader.ProgramId, shader.VertexShaderId);
 	glDetachShader(shader.ProgramId, shader.FragmentShaderId);
 
