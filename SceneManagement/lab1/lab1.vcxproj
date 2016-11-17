@@ -134,7 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\GLGameObject.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\original_main.cpp" />
@@ -150,7 +150,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation.hpp" />
+    <ClInclude Include="src\Animation.hpp" />
     <ClInclude Include="src\GLGameObject.hpp" />
   </ItemGroup>
   <ItemGroup>

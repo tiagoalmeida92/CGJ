@@ -37,6 +37,7 @@
 #include "qtrn.hpp"
 #include "Mesh.hpp"
 #include "Scene.hpp"
+#include "Animation.hpp"
 
 #define CAPTION "Hello Modern 3D World"
 #define ANIMATION_TIME_MS 1000
@@ -66,7 +67,7 @@ Vec3 groundTranslation;
 Vec3 cubeAnimationDistance;
 
 bool animating, reverse_anim = true;
-
+vector<Animation> animations;
 
 
 int animation_ms;
@@ -153,11 +154,10 @@ void createScene() {
 		);
 
 	cubeT = n->createNode();
+	cubeT->setMatrix(
+		translate(cube_start));
 	SceneNode* cube = cubeT->createNode();
 	cube->setMesh(&meshCube);
-	cube->setMatrix(
-		translate(cube_start)
-		);
 	
 	//SceneNode * parallelogram = n->createNode();
 	//parallelogram->setMesh(&meshParallelogram);
@@ -316,17 +316,11 @@ int last_time;
 
 void updateAnimatedValues(int delta) {
 	animation_ms += delta;
+	for (size_t i = 0; i < animations.size(); i++)
+	{
+		animations[i].animate((float)animation_ms / ANIMATION_TIME_MS, reverse_anim);
+	}
 
-	Vec3 cube_position;
-	if (!reverse_anim) {
-		cube_position = lerp(cube_start, cube_end, (float)animation_ms / ANIMATION_TIME_MS);
-	}
-	else {
-		cube_position = lerp(cube_end, cube_start, (float)animation_ms / ANIMATION_TIME_MS);
-	}
-	cout << cube_position << endl;
-	cubeT->setMatrix(
-		translate(cube_position));
 	if (animation_ms >= ANIMATION_TIME_MS) {
 		animating = false;
 		animation_ms = 0;
@@ -369,6 +363,10 @@ void drawScene()
 	glUseProgram(0);
 
 	checkOpenGLError("ERROR: Could not draw scene.");
+}
+
+void createAnimations() {
+	animations.push_back(Animation(cubeT, cube_start, cube_end));
 }
 
 void cleanup()
@@ -559,6 +557,7 @@ void init(int argc, char* argv[])
 	createShaderProgram();
 	//createBufferObjects();
 	createScene();
+	createAnimations();
 	setupCallbacks();
 }
 
