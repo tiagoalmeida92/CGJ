@@ -52,51 +52,42 @@ Mesh meshParallelogram;
 
 SceneGraph scenegraph;
 
-
-GLuint VaoId;
-GLuint VboVertices, VboTexcoords, VboNormals;
-
-GLuint VertexShaderId, FragmentShaderId, ProgramId;
+GLuint ProgramId;
 GLint Camera_UId;
 
 Shader shader;
 
-SceneNode * ground;
+SceneNode* figure;
+SceneNode * cubeT;
+SceneNode * parallelogramT;
+SceneNode * big_triangles_t;
+SceneNode * triangle_big_1T;
+SceneNode * triangle_big_2T;
+SceneNode * triangle_medT;
+SceneNode * triangle_small_1T;
+SceneNode * triangle_small_2T;
 
-Vec3 groundTranslation;
-Vec3 cubeAnimationDistance;
+Vec3 cube_start(0.37f, 0.0f, 0.0f);
+Vec3 cube_end(0.58f, 0.02f, 0);
+Vec3 paral_start(-0.2f, -0.55f, 0.0f);
+Vec3 paral_end(-1.0f, -0.250f, 0.0f);
+Vec3 sm_triangle1_start(0.38, 0.38f, 0);
+Vec3 sm_triangle1_end(-1.25f, 0.28f, 0);
+Vec3 sm_triangle2_start(0.0f, 0.0f, 0);
+Vec3 sm_triangle2_end(0.30f, -0.22f, 0);
+Vec3 m_triangle_start(0.750f, -0.75f, 0);
+Vec3 m_triangle_end(-0.2f, 0.85f, 0);
+Vec3 l_triangle1_start(0.0f, 0.0f, 0);
+Vec3 l_triangle1_end(0.30f, 0.3f, 0);
+Vec3 l_triangle2_start(0.0f, 0.0f, 0);
+Vec3 l_triangle2_end(-0.75f, -0.75f, 0);
+
+
 
 bool animating, reverse_anim = true;
 vector<Animation> animations;
 int animation_ms;
-
-///////////////////////////////////MATRICES
-#define PI 3.14159265358979f
-
-Mat4 I = identity4();
-//Mat4 translateAbitLeft = translate(Vec3(-0.1f, 0.0f, 0));
-//Mat4 translateLeft = translate(Vec3(-0.25f, 0.0f, 0));
-//Mat4 translateTopLeft = translate(Vec3(-0.3f, 0.5f, 0));
-//Mat4 big_triangle_1_translate = ;//Mat4 big_triangle_2_translate = translate(Vec3(-0.005f, -0.83f, 0));
-//Mat4 big_triangle_2_translate = ;
-//Mat4 translate25Right = translate(Vec3(0.25f, 0.0f, 0));
-//Mat4 translateRight = translate(Vec3(0.5f, 0.0f, 0));
-//Mat4 translateBottom = ;
-//Mat4 translateAlotBottom = translate(Vec3(0.0f, -0.65f, 0));
-//Mat4 translateTop = translate(Vec3(0.0f, 0.5f, 0));
-//
-//Mat4 translateMediumTriangle = ;
-//Mat4 parallelogramTranslate = translate(Vec3(0.0f, 0.32f, 0));
-//Mat4 translate25Bottom = translate(Vec3(0.0f, -0.25f, 0));
-//
-//Mat4 scaleMedium = scaling4(Vec3(1.0f, 1.0f, 0.3f));
-//Mat4 scaleNegative = scaling4(Vec3(-1.0f, -1.0f, -1.0f));
-//Mat4 scaleBig = ;
-//Mat4 scaleSmall = scaling4(Vec3(0.75f, 0.75f, 0.6f));
-//
-//Mat4 rotate90Left = rotate4(Vec3(0.0f, 0.0f, 1.0f), 90);
-//Mat4 rotateRight = rotate4(Vec3(0.0f, 0.0f, 1.0f), 270);
-//Mat4 rotate180 = rotate4(Vec3(0.0f, 0.0f, 1.0f), 180);
+Vec3 groundTranslation;
 
 
 
@@ -130,30 +121,6 @@ void createMeshes()
 	meshParallelogram = Mesh("meshes/parallelogram.obj");
 }
 
-SceneNode* figure;
-SceneNode * cubeT;
-SceneNode * parallelogramT;
-SceneNode * big_triangles_t;
-SceneNode * triangle_big_1T;
-SceneNode * triangle_big_2T;
-SceneNode * triangle_medT;
-SceneNode * triangle_small_1T;
-SceneNode * triangle_small_2T;
-
-Vec3 cube_start(0.37f, 0.0f, 0.0f);
-Vec3 cube_end(0.58f, 0.02f, 0);
-Vec3 paral_start(-0.2f, -0.55f, 0.0f);
-Vec3 paral_end(-1.0f, -0.250f, 0.0f);
-Vec3 sm_triangle1_start(0.38, 0.38f, 0);
-Vec3 sm_triangle1_end(-1.25f, 0.28f, 0);
-Vec3 sm_triangle2_start(0.0f, 0.0f, 0);
-Vec3 sm_triangle2_end(0.30f, -0.22f, 0);
-Vec3 m_triangle_start(0.750f, -0.75f, 0);
-Vec3 m_triangle_end(-0.2f, 0.85f, 0);
-Vec3 l_triangle1_start(0.0f, 0.0f, 0);
-Vec3 l_triangle1_end(0.30f, 0.3f, 0);
-Vec3 l_triangle2_start(0.0f, 0.0f, 0);
-Vec3 l_triangle2_end(-0.75f, -0.75f, 0);
 
 
 void createScene() {
@@ -163,7 +130,7 @@ void createScene() {
 	SceneNode * n = scenegraph.getRoot();
 	n->setShaderProgram(&shader);
 
-	ground = n->createNode();
+	SceneNode * ground = n->createNode();
 	ground->setMesh(&meshCube);
 	ground->setMatrix(
 		translate(Vec3(0.0f, 0.0f, -0.25f)) *

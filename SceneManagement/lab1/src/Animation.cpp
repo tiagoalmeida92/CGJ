@@ -43,30 +43,17 @@ void Animation::animate(float i, bool reverse) {
 	else {
 		position = lerp(end_, start_, i);
 	}
-	cout << position << endl;
-	float rotationZ;
+	float rotationX, rotationY, rotationZ;
 	if (!reverse) {
 		rotationZ = roll_angleZ_start + (roll_angleZ_end - roll_angleZ_start) * i;
-	}
-	else {
-		rotationZ = roll_angleZ_end + (roll_angleZ_start - roll_angleZ_end) * i;
-	}
-	float rotationY;
-	if (!reverse) {
 		rotationY = roll_angleY_start + (roll_angleY_end - roll_angleY_start) * i;
-	}
-	else {
-		rotationY = roll_angleY_end + (roll_angleY_start - roll_angleY_end) * i;
-	}
-
-	float rotationX;
-	if (!reverse) {
 		rotationX = roll_angleX_start + (roll_angleX_end - roll_angleX_start) * i;
 	}
 	else {
+		rotationZ = roll_angleZ_end + (roll_angleZ_start - roll_angleZ_end) * i;
 		rotationX = roll_angleX_end + (roll_angleX_start - roll_angleX_end) * i;
+		rotationY = roll_angleY_end + (roll_angleY_start - roll_angleY_end) * i;
 	}
-	cout << rotationZ << endl;
 	node_->setMatrix(
 		translate(position)
 		* rotate4(AXIS_X, rotationX)
