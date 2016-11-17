@@ -130,7 +130,12 @@ void createMeshes()
 	meshParallelogram = Mesh("meshes/parallelogram.obj");
 }
 
-
+int calculateDelta() {
+	int current_time = glutGet(GLUT_ELAPSED_TIME);
+	int delta = current_time - last_time;
+	last_time = current_time;
+	return delta;
+}
 
 void createScene() {
 	scenegraph.setCamera(new Camera(Camera_UId));
@@ -232,23 +237,6 @@ void createShaderProgram()
 	}
 }
 
-void destroyShaderProgram()
-{
-
-	glUseProgram(0);
-	DestroyShader(shader);
-
-	checkOpenGLError("ERROR: Could not destroy shaders.");
-}
-
-
-void destroyMeshes()
-{
-	meshTriangle.destroy();
-	meshCube.destroy();
-	meshParallelogram.destroy();
-	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
-}
 
 void updateAnimatedValues(int delta) {
 	animation_ms += delta;
@@ -266,25 +254,24 @@ void updateAnimatedValues(int delta) {
 
 void setViewProjectionMatrix()
 {
+	qtrn qtX = fromAngleAxis(frameRotationX, Vec4{ 1,0,0,1 });
+	qtrn qtY = fromAngleAxis(frameRotationY, Vec4{ 0,1,0,1 });
+	q = qtX * qtY * q;
+	frameRotationX = frameRotationY = 0;
+
 	scenegraph.getCamera()->setViewMatrix(viewMatrix * q.toMatrix());
 }
 
 
 void drawScene()
 {
-	int current_time = glutGet(GLUT_ELAPSED_TIME);
-	int delta = current_time - last_time;
-	last_time = current_time;
+	int delta = calculateDelta();
 	if (animating) {
 		updateAnimatedValues(delta);
 	}
+
 	/*glBindVertexArray(VaoId);*/
 	glUseProgram(ProgramId);
-
-	qtrn qtX = fromAngleAxis(frameRotationX, Vec4{ 1,0,0,1 });
-	qtrn qtY = fromAngleAxis(frameRotationY, Vec4{ 0,1,0,1 });
-	q = qtX * qtY * q;
-	frameRotationX = frameRotationY = 0;
 
 	setViewProjectionMatrix();
 	
@@ -313,10 +300,29 @@ void createAnimations() {
 	//animations.push_back(Animation(figure, Vec3(), Vec3(0, 0,0.5f), AXIS_X, 0, 90));
 }
 
+
+void destroyShaderProgram()
+{
+	glUseProgram(0);
+	DestroyShader(shader);
+
+	checkOpenGLError("ERROR: Could not destroy shaders.");
+}
+
+
+void destroyMeshes()
+{
+	meshTriangle.destroy();
+	meshCube.destroy();
+	meshParallelogram.destroy();
+	checkOpenGLError("ERROR: Could not destroy VAOs and VBOs.");
+}
+
 void cleanup()
 {
 	destroyShaderProgram();
 	destroyMeshes();
+	scenegraph.destroy();
 }
 
 void display()
@@ -371,19 +377,18 @@ void onMouse(int button, int state, int x, int y)
 void onMotion(int x, int y) {
 	if (x > last_mouse_x) {
 		frameRotationY += OFFSET_CAMERA;
-	}
+	} 
 	else if (x < last_mouse_x) {
 		frameRotationY -= OFFSET_CAMERA;
 	}
 	if (y > last_mouse_y) {
 		frameRotationX += OFFSET_CAMERA;
-	}
+	} 
 	else if (y < last_mouse_y) {
 		frameRotationX -= OFFSET_CAMERA;
 	}
 	last_mouse_x = x;
 	last_mouse_y = y;
-
 }
 
 

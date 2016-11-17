@@ -36,6 +36,14 @@ void SceneNode::draw(Mat4& parents_matrix) {
 	}
 }
 
+void SceneNode::destroy() {
+	for (size_t i = 0; i < children.size(); i++)
+	{
+		children[i]->destroy();
+	}
+	children.clear();
+}
+
 
 SceneGraph::SceneGraph() {
 	root = SceneNode();
@@ -60,4 +68,8 @@ SceneNode* SceneGraph::createNode() {
 
 void SceneGraph::draw() {
 	root.draw(identity4());
+}
+
+void SceneGraph::destroy() {
+	root.destroy();
 }

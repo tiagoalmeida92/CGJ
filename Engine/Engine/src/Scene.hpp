@@ -16,6 +16,7 @@ public:
 	SceneNode* createNode();
 	void setShaderProgram(Shader* shader);
 	void draw(Mat4&);
+	void destroy();
 
 
 private:
@@ -34,6 +35,8 @@ public:
 	SceneNode* getRoot();
 	SceneNode* createNode();
 	void draw();
+
+	void destroy();
 
 private:
 	SceneNode root;
