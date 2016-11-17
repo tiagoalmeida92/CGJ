@@ -154,16 +154,16 @@ void createScene() {
 	cubeT->setMatrix(translate(cube_start));
 	SceneNode* cube = cubeT->createNode();
 	cube->setMesh(&meshCube);
-	cube->setMatrix(rotate4(AXIS_Z, 45) 
-		* scaling4(Vec3(1.1f,1.1f,1.1f)));
-	
+	cube->setMatrix(rotate4(AXIS_Z, 45)
+		* scaling4(Vec3(1.1f, 1.1f, 1.1f)));
+
 	parallelogramT = figure->createNode();
 	parallelogramT->setMatrix(translate(paral_start));
-	
+
 	SceneNode * parallelogram = parallelogramT->createNode();
 	parallelogram->setMesh(&meshParallelogram);
 	parallelogram->setMatrix(
-		scaling4(Vec3(1.0f, 0.75f, 1.0f)) 
+		scaling4(Vec3(1.0f, 0.75f, 1.0f))
 		);
 
 	triangle_big_1T = figure->createNode();
@@ -271,7 +271,6 @@ void drawScene()
 	glUseProgram(ProgramId);
 
 	setViewProjectionMatrix();
-
 	scenegraph.draw();
 
 	glUseProgram(0);
@@ -369,13 +368,13 @@ void onMouse(int button, int state, int x, int y)
 void onMotion(int x, int y) {
 	if (x > last_mouse_x) {
 		frameRotationY += OFFSET_CAMERA;
-	} 
+	}
 	else if (x < last_mouse_x) {
 		frameRotationY -= OFFSET_CAMERA;
 	}
 	if (y > last_mouse_y) {
 		frameRotationX += OFFSET_CAMERA;
-	} 
+	}
 	else if (y < last_mouse_y) {
 		frameRotationX -= OFFSET_CAMERA;
 	}
@@ -390,7 +389,8 @@ void onKey(unsigned char key, int x, int y) {
 	}
 	else if (key == 's') {
 		groundTranslation.y -= MOVE_OFFSET;
-	}else if (key == 'a') {
+	}
+	else if (key == 'a') {
 		groundTranslation.x -= MOVE_OFFSET;
 	}
 	else if (key == 'd') {
