@@ -135,7 +135,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
-    <ClCompile Include="src\GLGameObject.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\original_main.cpp" />
     <ClCompile Include="src\teapot.cpp" />
@@ -151,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Animation.hpp" />
-    <ClInclude Include="src\GLGameObject.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\matrixstack.cpp" />

@@ -12,10 +12,9 @@ class Camera {
 		void setProjectionMatrix(Mat4& projectionMatrix);
 
 		GLint CameraUId;
-
-	private:
-
-
 		Mat4 view_matrix;
 		Mat4 projection_matrix;
+
+		Mat4 get_matrix();
+
 };

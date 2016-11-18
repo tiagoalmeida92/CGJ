@@ -33,7 +33,6 @@
 #include "gl_shader.hpp"
 #include "vec.hpp"
 #include "matrix_factory.hpp"
-#include "GLGameObject.hpp"
 #include "qtrn.hpp"
 #include "Mesh.hpp"
 #include "Scene.hpp"
@@ -146,7 +145,7 @@ void createScene() {
 	ground->setMesh(&meshCube);
 	ground->setMatrix(
 		translate(Vec3(0.0f, 0.0f, -0.25f)) *
-		scaling4(Vec3(7.0f, 7.0f, 0.25f))
+		scaling4(Vec3(5.0f, 5.0f, 0.25f))
 		);
 
 	figure = n->createNode();
@@ -211,10 +210,6 @@ void createScene() {
 		rotate4(AXIS_Z, 225) *
 		scaling4(Vec3(2.1f, 2.1f, 1.0f))
 		);
-
-
-
-
 }
 
 void createShaderProgram()
@@ -230,10 +225,10 @@ void createShaderProgram()
 			BindAttributeLocation(ProgramId, Mesh::NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
 		addUniform(shader, "Matrix");
+		addUniform(shader, "Camera");
 		Camera_UId = GetUniformLocation(ProgramId, "Camera");
 	}
 }
-
 
 void animateScene(int delta) {
 	animation_ms += delta;
@@ -241,7 +236,6 @@ void animateScene(int delta) {
 	{
 		animations[i].animate((float)animation_ms / ANIMATION_TIME_MS, reverse_anim);
 	}
-
 	if (animation_ms >= ANIMATION_TIME_MS) {
 		animating = false;
 		animation_ms = 0;
@@ -267,12 +261,8 @@ void drawScene()
 		animateScene(delta);
 	}
 
-	glUseProgram(ProgramId);
-
 	setViewProjectionMatrix();
 	scenegraph.draw();
-
-	glUseProgram(0);
 
 	checkOpenGLError("ERROR: Could not draw scene.");
 }
@@ -287,6 +277,7 @@ void createAnimations() {
 	animations.push_back(Animation(triangle_small_1T, sm_triangle1_start, sm_triangle1_end, 0, 225));
 	animations.push_back(Animation(triangle_small_2T, sm_triangle2_start, sm_triangle2_end, 0, 45));
 	animations.push_back(Animation(triangle_medT, m_triangle_start, m_triangle_end, 0, 135));
+	animations.push_back(Animation(figure, Vec3(), Vec3(0.5f, 0,0.0f), 0, 0));
 	//animations.push_back(Animation(figure, Vec3(), Vec3(0, 0,0.5f), AXIS_X, 0, 90));
 }
 

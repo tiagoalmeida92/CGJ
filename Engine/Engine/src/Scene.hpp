@@ -15,7 +15,7 @@ public:
 	void setMatrix(Mat4& matrix);
 	SceneNode* createNode();
 	void setShaderProgram(Shader* shader);
-	void draw(Mat4&);
+	void draw(Camera*, Mat4&);
 	void destroy();
 
 

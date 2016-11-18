@@ -21,11 +21,12 @@ void SceneNode::setShaderProgram(Shader* shader) {
 	shader_ = shader;
 }
 
-void SceneNode::draw(Mat4& parents_matrix) {
+void SceneNode::draw(Camera* camera, Mat4& parents_matrix) {
 
 	if (mesh_ && shader_) {
 		glUseProgram(shader_->ProgramId);
 		glUniformMatrix4fv(shader_->uniforms["Matrix"], 1, GL_FALSE, (parents_matrix * model_matrix).convert_opengl());
+		glUniformMatrix4fv(shader_->uniforms["Camera"], 1, GL_FALSE, (camera->get_matrix()).convert_opengl());
 		mesh_->draw();
 		glUseProgram(0);
 	}
@@ -34,7 +35,7 @@ void SceneNode::draw(Mat4& parents_matrix) {
 		if (!children[i]->shader_) {
 			children[i]->shader_ = shader_;
 		}
-		children[i]->draw(parents_matrix * model_matrix);
+		children[i]->draw(camera, parents_matrix * model_matrix);
 	}
 }
 
@@ -69,7 +70,7 @@ SceneNode* SceneGraph::createNode() {
 
 
 void SceneGraph::draw() {
-	root.draw(identity4());
+	root.draw(camera_, identity4());
 }
 
 void SceneGraph::destroy() {

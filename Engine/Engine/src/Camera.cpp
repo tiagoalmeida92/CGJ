@@ -6,8 +6,12 @@ Camera::Camera(GLint cameraUid) {
 
 void Camera::setViewMatrix(Mat4& viewMatrix) {
 	view_matrix = viewMatrix;
-	glUniformMatrix4fv(CameraUId, 1, GL_FALSE, (projection_matrix * view_matrix).convert_opengl());
+	
 }
 void Camera::setProjectionMatrix(Mat4& projectionMatrix) {
 	projection_matrix = projectionMatrix;
+}
+
+Mat4 Camera::get_matrix() {
+	return projection_matrix * view_matrix;
 }
