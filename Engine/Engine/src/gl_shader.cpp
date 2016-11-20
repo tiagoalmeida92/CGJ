@@ -81,25 +81,26 @@ Shader CreateProgram(char* vertexShaderFile, char* fragmentShaderFile) {
 	return shader;
 }
 
-void BindAttributeLocation(GLint pId, GLubyte idx, const char* name) {
-	glBindAttribLocation(pId, idx, name);
+void Shader::BindAttributeLocation(GLubyte idx, const char* name) {
+	glBindAttribLocation(ProgramId, idx, name);
 }
 
 GLint GetUniformLocation(GLint pId, const char* name) {
 	return glGetUniformLocation(pId, name);
 }
 
-void addUniform(Shader& shader, string name) {
-	GLint location = GetUniformLocation(shader.ProgramId, name.c_str());
-	shader.uniforms[name] = location;
+GLint Shader::addUniform(string name) {
+	GLint location = GetUniformLocation(ProgramId, name.c_str());
+	uniforms[name] = location;
+	return location;
 }
 
-void DestroyShader(Shader shader) {
+void Shader::destroyShader() {
 	glUseProgram(0);
-	glDetachShader(shader.ProgramId, shader.VertexShaderId);
-	glDetachShader(shader.ProgramId, shader.FragmentShaderId);
+	glDetachShader(ProgramId, VertexShaderId);
+	glDetachShader(ProgramId, FragmentShaderId);
 
-	glDeleteShader(shader.FragmentShaderId);
-	glDeleteShader(shader.VertexShaderId);
-	glDeleteProgram(shader.ProgramId);
+	glDeleteShader(FragmentShaderId);
+	glDeleteShader(VertexShaderId);
+	glDeleteProgram(ProgramId);
 }

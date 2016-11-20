@@ -20,14 +20,15 @@ typedef struct {
 	std::map<string, GLint> uniforms;
 
 
+	void BindAttributeLocation(GLubyte, const char*);
+
+	//GLint GetUniformLocation(GLint, const char*);
+
+	void destroyShader();
+
+	GLint addUniform(string name);
+
 } Shader;
 
 Shader CreateProgram(char*, char*);
 
-void BindAttributeLocation(GLint, GLubyte, const char*);
-
-GLint GetUniformLocation(GLint, const char*);
-
-void DestroyShader(Shader);
-
-void addUniform(Shader& shader, string name);

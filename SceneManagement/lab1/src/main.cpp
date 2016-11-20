@@ -218,15 +218,14 @@ void createShaderProgram()
 	if (shader.compiled) {
 		ProgramId = shader.ProgramId;
 
-		BindAttributeLocation(ProgramId, Mesh::VERTICES, "inPosition");
+		shader.BindAttributeLocation(Mesh::VERTICES, "inPosition");
 		if (meshTriangle.TexcoordsLoaded)
-			BindAttributeLocation(ProgramId, Mesh::TEXCOORDS, "inTexcoord");
+			shader.BindAttributeLocation(Mesh::TEXCOORDS, "inTexcoord");
 		if (meshTriangle.NormalsLoaded)
-			BindAttributeLocation(ProgramId, Mesh::NORMALS, "inNormal");
+			shader.BindAttributeLocation(Mesh::NORMALS, "inNormal");
 		glLinkProgram(ProgramId);
-		addUniform(shader, "Matrix");
-		addUniform(shader, "Camera");
-		Camera_UId = GetUniformLocation(ProgramId, "Camera");
+		shader.addUniform("Matrix");
+		Camera_UId = shader.addUniform("Camera");
 	}
 }
 
@@ -284,7 +283,7 @@ void createAnimations() {
 
 void destroyShaderProgram()
 {
-	DestroyShader(shader);
+	shader.destroyShader();
 	checkOpenGLError("ERROR: Could not destroy shaders.");
 }
 
