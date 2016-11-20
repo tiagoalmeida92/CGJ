@@ -89,7 +89,7 @@ Vec3 l_triangle2_start(0.0f, 0.0f, 0);
 Vec3 l_triangle2_end(-0.75f, -0.75f, 0);
 
 
-#define ANIMATION_TIME_MS 2500
+#define ANIMATION_TIME_MS 1500
 
 bool animating, reverse_anim = true;
 vector<Animation> animations;
