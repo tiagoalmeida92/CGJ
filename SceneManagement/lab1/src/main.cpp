@@ -50,7 +50,6 @@ Shader shader;
 
 SceneGraph scenegraph;
 
-GLuint ProgramId;
 GLint Camera_UId;
 
 Vec3 eye = { 0, 0, 8 };
@@ -216,14 +215,11 @@ void createShaderProgram()
 {
 	shader = CreateProgram("glscripts/triangle.vert", "glscripts/triangle.frag");
 	if (shader.compiled) {
-		ProgramId = shader.ProgramId;
-
 		shader.BindAttributeLocation(Mesh::VERTICES, "inPosition");
 		if (meshTriangle.TexcoordsLoaded)
 			shader.BindAttributeLocation(Mesh::TEXCOORDS, "inTexcoord");
 		if (meshTriangle.NormalsLoaded)
 			shader.BindAttributeLocation(Mesh::NORMALS, "inNormal");
-		glLinkProgram(ProgramId);
 		shader.addUniform("Matrix");
 		Camera_UId = shader.addUniform("Camera");
 	}
